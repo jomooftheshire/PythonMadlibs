@@ -301,53 +301,16 @@ private int taskNum, taskSize;
         code = data.getCode(level);
         screenCode = new ArrayList<Word>(code); //contains the information that will change.
         String task = data.getTask(level);
-        lblTask.setText(task);  
-        newKeyboard(keyboard);
-        newCode(screenCode);  
-        //printLabelLocation();
-        objectchecker();
+        lblTask.setText(task);
+        newCode(screenCode);
+        newKeyboard(keyboard);  
+//        printLabelName();             stored in tester.
+//        printLabelPoints();
+//        objectchecker();
+//        labelChecker();
     }
     
-    private void objectchecker(){
-        boolean found = false;
-        System.out.println("Code:");
-        for (Word c : screenCode){        
-            for (Word k : keyboard){
-                if(c.equals(k)){
-                    System.out.println("Found: " + "c:" + c.getWord() + ", k:" + k.getWord());
-                    found = true;
-                }
-            }
-        }
-        if(found == false){
-            System.out.println("No marches found");
-        }
-    }
-    
-//    private void printLabelLocation(){
-//        System.out.println("Code:");
-//        for(Word c : screenCode){
-//            try {
-//                System.out.println(c.getWord() + ":" + "[" + c.getLabel().getX() + "," + c.getLabel().getY() + "]");
-//            }
-//            catch (java.awt.IllegalComponentStateException x){
-//                System.out.println("No Place:" + c.getWord());
-//            }
-//        }
 //        
-//        System.out.println();
-//        System.out.println("Keyboard");
-//        for(Word k : keyboard){
-//            try {
-//                System.out.println(k.getWord() + ":" + "[" + k.getLabel().getX() + "," + k.getLabel().getY() + "]");
-//            }
-//            catch (java.awt.IllegalComponentStateException x){
-//                System.out.println("No Place:" + k.getWord());
-//            }
-//        }
-//        
-//    }
-    
     
     private void newCode(ArrayList<Word> c){
         switcher.setCodeList(screenCode);
@@ -363,7 +326,7 @@ private int taskNum, taskSize;
             else {
                 String name = "code" + num;
                 boolean kb = false;         //determines if keyboard to have those special options in the new label.
-                word.newLabel(xCoord, yCoord, kb);
+                word.newLabel(xCoord, yCoord, kb, name);
                 word.setLabelName(name);
                 panelCode.add(word.getLabel());
                 xCoord+=50;
@@ -378,16 +341,13 @@ private int taskNum, taskSize;
         //int yCoord = panelKeyboard.getY();  //this will have to be revamped to make it more central and equal eventually
         int xCoord = 0;
         int yCoord = 0;
-       
-        
         int num=0;
         for (Word word : keyboard){
             String name = "key"+num;
             boolean kb = true;
-            word.newLabel(xCoord, yCoord, kb);
+            word.newLabel(xCoord, yCoord, kb, name);
             word.setLabelName(name);
             panelKeyboard.add(word.getLabel());
-            System.out.println("[" + word.getLabel().getX() + "," + word.getLabel().getX() + "]");
             xCoord+=50;
             num++;
         }
