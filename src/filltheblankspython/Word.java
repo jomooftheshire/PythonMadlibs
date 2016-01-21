@@ -29,7 +29,7 @@ public class Word {
         word = w;
         blank = b;
         switcher = s;
-        label = new JLabel();
+        //label = new JLabel();
         empty = false;
     }
     
@@ -60,7 +60,9 @@ public class Word {
         blank = bool;
     }
     
-     public void newLabel (int x, int y, boolean keyboard){
+     public void newLabel (int x, int y, boolean keyboard, String name){
+        label = new JLabel();
+        label.setName(name);
         label.setLocation(x, y);
         label.setFocusable(true);
         label.setSize(50, 30);
