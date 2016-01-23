@@ -4,8 +4,10 @@
  * and open the template in the editor.
  */
 package filltheblankspython;
+import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import javax.swing.*;
 
 
@@ -37,11 +39,11 @@ private int taskNum, taskSize;
         
     }
     
-    public void refresh(){
-        screenCode = switcher.getCode();
-        keyboard = switcher.getKeyboard();
-        
-    }
+//    public void refresh(){
+//        screenCode = switcher.getCode();
+//        keyboard = switcher.getKeyboard();
+//        
+//    }
 
     private void setLblNum(int taskNum, int taskSize){ //not working
         int size = taskSize;
@@ -130,7 +132,7 @@ private int taskNum, taskSize;
         panelFunction.setMinimumSize(new java.awt.Dimension(320, 400));
         panelFunction.setPreferredSize(new java.awt.Dimension(320, 400));
 
-        btnCheck.setIcon(new javax.swing.ImageIcon(getClass().getResource("/filltheblankspython/Images/alphaTick.png"))); // NOI18N
+        btnCheck.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/alphaTick.png"))); // NOI18N
         btnCheck.setName("btnCheck"); // NOI18N
         btnCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -138,7 +140,7 @@ private int taskNum, taskSize;
             }
         });
 
-        btnRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/filltheblankspython/Images/alphaCross.png"))); // NOI18N
+        btnRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/alphaCross.png"))); // NOI18N
         btnRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRemoveActionPerformed(evt);
@@ -229,13 +231,20 @@ private int taskNum, taskSize;
                     int x, y;
                     x = word1.getX();
                     y = word1.getY();
-                    // need to put the image inside of sowmthing to place azt x+25, y-5 
-                        //also need to look at overlaying objects on GUI.
-                    //maybe it should be benhind the label
+                    Point p = new Point(x, y);
+                    JLabel label = new JLabel();
+                    label.setLocation(p);
+                    label.setIcon(new javax.swing.ImageIcon(getClass().getResource("Images/alphaWrong.png")));
                 }
                 
                 else if ((word1.getWord().equals(word2.getWord())) && word1.isBlank() == false){
-                    //make a tick to the back of the label
+                    int x, y;
+                    x = word1.getX();
+                    y = word1.getY();
+                    Point p = new Point(x, y);
+                    JLabel label = new JLabel();
+                    label.setLocation(p);
+                    label.setIcon(new javax.swing.ImageIcon(getClass().getResource("Images/alphaCorrect.png")));
                 }
                 
                 if (correct == true){
@@ -308,6 +317,7 @@ private int taskNum, taskSize;
 //        printLabelPoints();
 //        objectchecker();
 //        labelChecker();
+//        getListeners();
     }
     
 //        
@@ -335,17 +345,15 @@ private int taskNum, taskSize;
         }
     }
     
-    private void newKeyboard(ArrayList<Word> k){
+private void newKeyboard(ArrayList<Word> k){
         switcher.setKeyboardList(keyboard);
-        //int xCoord = panelKeyboard.getX();
-        //int yCoord = panelKeyboard.getY();  //this will have to be revamped to make it more central and equal eventually
+        
         int xCoord = 0;
         int yCoord = 0;
         int num=0;
         for (Word word : keyboard){
             String name = "key"+num;
-            boolean kb = true;
-            word.newLabel(xCoord, yCoord, kb, name);
+            word.newLabel(xCoord, yCoord, true, name);
             word.setLabelName(name);
             panelKeyboard.add(word.getLabel());
             xCoord+=50;
@@ -358,6 +366,9 @@ private int taskNum, taskSize;
     
     public void addtoPanelKB(JLabel label) {panelKeyboard.add(label);}
     
+    //static void refresh(){
+    //   newTask(taskNum);
+    //}
     
     //testing if kb and blank are sma evalues.
     public void memoryLocation(){
@@ -388,6 +399,18 @@ private int taskNum, taskSize;
 //        }
 //    }
     
+    
+    public void getListeners(){
+        for(Word w : keyboard){
+            Object[] J = w.getLabel().getMouseListeners();
+            System.out.println(w.getWord() + ":" + J.length);
+        }
+        
+        for(Word w : code){
+            Object[] J = w.getLabel().getMouseListeners();
+            System.out.println(w.getWord() + ":" + J.length);
+        }
+    }
    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

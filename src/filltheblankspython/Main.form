@@ -207,7 +207,7 @@
         <Component class="javax.swing.JButton" name="btnCheck">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/filltheblankspython/Images/alphaTick.png"/>
+              <Image iconType="3" name="/Images/alphaTick.png"/>
             </Property>
             <Property name="name" type="java.lang.String" value="btnCheck" noResource="true"/>
           </Properties>
@@ -221,7 +221,7 @@
         <Component class="javax.swing.JButton" name="btnRemove">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/filltheblankspython/Images/alphaCross.png"/>
+              <Image iconType="3" name="/Images/alphaCross.png"/>
             </Property>
           </Properties>
           <AccessibilityProperties>
