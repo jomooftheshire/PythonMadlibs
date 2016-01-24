@@ -48,9 +48,7 @@ public class Parser {
         } catch (IOException x){
             System.err.format("IOException: %s%n", x);
         }
-        
        
-        
     }
     
     private String[] StringChopper(String string){
