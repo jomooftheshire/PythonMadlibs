@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 package filltheblankspython;
+import java.awt.Component;
+import java.awt.Panel;
 import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ private Data data;
 private ArrayList<Word> code;
 private ArrayList<Word> screenCode;
 private ArrayList<Word> keyboard;
-private WordSwitcher switcher;
+private static WordSwitcher switcher;
 private int taskNum, taskSize;
    
 /**
@@ -39,12 +41,6 @@ private int taskNum, taskSize;
         newTask(taskNum);
         
     }
-    
-//    public void refresh(){
-//        screenCode = switcher.getCode();
-//        keyboard = switcher.getKeyboard();
-//        
-//    }
 
     private void setLblNum(int taskNum, int taskSize){ //not working
         int size = taskSize;
@@ -248,14 +244,14 @@ private int taskNum, taskSize;
                     Point p = new Point(x, y);
                     JLabel label = new JLabel();
                     label.setLocation(p);
-                    label.setIcon(new javax.swing.ImageIcon(getClass().getResource("Images/alphaCorrect.png")));
+                    label.setIcon(new javax.swing.ImageIcon(getClass().getResource("Images/alphaRight.png")));
                     list.add(label);
                 }
                 
             }
             //shows whats wrong or correct then hides the images again.
             try{
-            TimeUnit.SECONDS.sleep(2);
+            TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException ex){
                 System.out.println("Sleep failed");
             }
@@ -267,19 +263,52 @@ private int taskNum, taskSize;
         }
         
         if (correct == true){
+                    System.out.println("Correct");
                     JOptionPane.showMessageDialog(null, "Correct");
+                    removeComponents(panelCode);
+                    removeComponents(panelKeyboard);
                     taskNum +=1;
                     newTask(taskNum);     //goes to next task
-                
-            
-            
+        }
+        
+        else {
+            System.out.println("NOT CORRECT");
+            System.out.println("ScreenCode\t::\tCode");
+            for(int i=0; i < code.size(); i++){
+                Word s1 = screenCode.get(i);
+                Word s2 = screenCode.get(i);
+                System.out.println(s1.getWord() + "\t::\t" + s2.getWord());
+                System.out.println(boolToStr(s1) + "\t::\t" + boolToStr(s2));
+            }
         }
     }//GEN-LAST:event_btnCheckActionPerformed
 
+    String boolToStr(Word w){
+        String bool;
+        if(w.isBlank()){
+            bool = "true";
+        }
+        else {
+            bool = "false";
+        }
+        return bool;
+    }
+    
     private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveActionPerformed
+        removeComponents(panelCode);
+        removeComponents(panelKeyboard);
         newTask(taskNum);
     }//GEN-LAST:event_btnRemoveActionPerformed
 
+    private static void removeComponents(Panel p){
+        Component[] panel = p.getComponents();
+        for(Component comp : panel){
+            p.remove(comp);
+        }
+       p.revalidate();
+       p.repaint();
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -331,47 +360,54 @@ private int taskNum, taskSize;
         screenCode = new ArrayList<Word>(code); //contains the information that will change.
         String task = data.getTask(level);
         lblTask.setText(task);
-        newCode(screenCode);
-        newKeyboard(keyboard);  
-//        printLabelName();             stored in tester.
-//        printLabelPoints();
-//        objectchecker();
-//        labelChecker();
-//        getListeners();
+        setup(screenCode, keyboard);
+        
     }
     
-//        
+    private static void setup(ArrayList<Word> c, ArrayList<Word> kb){
+        newCode(c);
+        newKeyboard(kb);  
+    }
     
-    private void newCode(ArrayList<Word> c){
-        switcher.setCodeList(screenCode);
+    
+    public static void refresh(ArrayList<Word> c, ArrayList<Word> kb){
+        //This take is used to be able to update the UI when switch has takn place.
+        removeComponents(panelCode);
+        removeComponents(panelKeyboard);
+        setup(c, kb);
+    }
+    
+    private static void newCode(ArrayList<Word> c){
+        switcher.setCodeList(c);
         int xCoord = panelCode.getX();
         int yCoord = panelCode.getY();
         int num = 0;
-        for(Word word : screenCode) {
+        for(Word word : c) {
+            String name = "code" + num;
             //System.out.println("Word:" + word.getWord());
             if (word.getWord().equals("@newline@")){
                 yCoord+=60;
                 xCoord = panelCode.getX();
+                word.newLabel(0, 0, false, name);
+                word.getLabel().setVisible(false);
             }
             else {
-                String name = "code" + num;
                 boolean kb = false;         //determines if keyboard to have those special options in the new label.
                 word.newLabel(xCoord, yCoord, kb, name);
                 word.setLabelName(name);
                 panelCode.add(word.getLabel());
                 xCoord+=50;
-                num++;
             }
+            num++;
         }
     }
     
-private void newKeyboard(ArrayList<Word> k){
-        switcher.setKeyboardList(keyboard);
-        
+private static void newKeyboard(ArrayList<Word> k){
+        switcher.setKeyboardList(k);
         int xCoord = 0;
         int yCoord = 0;
         int num=0;
-        for (Word word : keyboard){
+        for (Word word : k){
             String name = "key"+num;
             word.newLabel(xCoord, yCoord, true, name);
             word.setLabelName(name);
@@ -381,66 +417,15 @@ private void newKeyboard(ArrayList<Word> k){
         }
         
     }
-    
-    public void addtoPanelCode(JLabel label) {panelCode.add(label);}
-    
-    public void addtoPanelKB(JLabel label) {panelKeyboard.add(label);}
-    
-    //static void refresh(){
-    //   newTask(taskNum);
-    //}
-    
-    //testing if kb and blank are sma evalues.
-    public void memoryLocation(){
-        for (Word b: code){
-            if(b.isBlank() == true){
-                for(Word k : keyboard){
-                    if(k == b){
-                        System.out.println("Match found");
-                    }
-                }
-            }
-        }
-        System.out.println("Finished");
-    }
-    
-    
-//    public void selectedLabel(String name){
-//        //This uses the name as a reference currently, however would be preferable
-//        //if it could hold the word.
-//        if(guard == false){
-//            temp1 = name;
-//            guard = true;
-//        }
-//        
-//        else {
-//            temp2 = name;
-//            guard = false;
-//        }
-//    }
-    
-    
-//    public void getListeners(){
-//        for(Word w : keyboard){
-//            Object[] J = w.getLabel().getMouseListeners();
-//            System.out.println(w.getWord() + ":" + J.length);
-//        }
-//        
-//        for(Word w : code){
-//            Object[] J = w.getLabel().getMouseListeners();
-//            System.out.println(w.getWord() + ":" + J.length);
-//        }
-//    }
-   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCheck;
     private javax.swing.JButton btnRemove;
     private javax.swing.JLabel lblNum;
     private javax.swing.JLabel lblTask;
-    private java.awt.Panel panelCode;
+    private static java.awt.Panel panelCode;
     private javax.swing.JPanel panelFunction;
-    private java.awt.Panel panelKeyboard;
+    private static java.awt.Panel panelKeyboard;
     private java.awt.Panel panelTask;
     // End of variables declaration//GEN-END:variables
 }
