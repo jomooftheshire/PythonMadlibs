@@ -6,6 +6,7 @@
 package filltheblankspython;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
@@ -24,12 +25,13 @@ public class Word {
     private WordSwitcher switcher;
     int clicks;
     boolean empty;
+    boolean kb;
+    
    
     public Word(String w, boolean b, WordSwitcher s){
         word = w;
         blank = b;
         switcher = s;
-        //label = new JLabel();
         empty = false;
     }
     
@@ -61,6 +63,7 @@ public class Word {
     }
     
      public void newLabel (int x, int y, boolean keyboard, String name){
+        kb = keyboard;
         label = new JLabel();
         label.setName(name);
         label.setLocation(x, y);
@@ -82,16 +85,18 @@ public class Word {
             standardBorder();
         }
             
-            
-        label.addMouseListener(new MouseAdapter() {
+        if(label.isFocusable()){    
+            label.addMouseListener(new MouseAdapter() {
                @Override
                public void mousePressed(MouseEvent e) {
-                   if(label.isFocusable()){
+                   
                         label.setBorder(BorderFactory.createDashedBorder(Color.BLUE));
+                        System.out.println("Click");
                         selected();
+                        
                    }
-               }
-            });
+               });
+            }
      }
      
      public void selected(){
@@ -142,6 +147,14 @@ public class Word {
       
       public void printName(){
           System.out.println(word);
+      }
+      
+      public boolean isKeyboard(){
+          return kb; 
+      }
+      
+      public void setLabelPoint(Point p){
+          label.setLocation(p);
       }
       
       
