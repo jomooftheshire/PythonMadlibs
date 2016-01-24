@@ -23,9 +23,18 @@ public class Word {
     private JLabel label;
     private int xCoord, yCoord;
     private WordSwitcher switcher;
-    int clicks;
-    boolean empty;
-    boolean kb;
+    private boolean empty;
+    private boolean kb;
+    //Mouse adapter for deleting purposes. May not be necessary
+    private MouseAdapter ml = new MouseAdapter() {    
+               @Override
+               public void mousePressed(MouseEvent e) {
+                   
+                        label.setBorder(BorderFactory.createDashedBorder(Color.BLUE));
+                        selected();
+                        
+                   }
+               };
     
    
     public Word(String w, boolean b, WordSwitcher s){
@@ -85,18 +94,17 @@ public class Word {
             standardBorder();
         }
             
-        if(label.isFocusable()){    
-            label.addMouseListener(new MouseAdapter() {
-               @Override
-               public void mousePressed(MouseEvent e) {
-                   
-                        label.setBorder(BorderFactory.createDashedBorder(Color.BLUE));
-                        System.out.println("Click");
-                        selected();
-                        
-                   }
-               });
+        if(label.isFocusable()){
+               addMouse();
             }
+     }
+     
+     public void addMouse(){
+         label.addMouseListener(ml);
+     }
+     
+     public void removeMouse(){
+         label.removeMouseListener(ml);
      }
      
      public void selected(){
@@ -155,6 +163,10 @@ public class Word {
       
       public void setLabelPoint(Point p){
           label.setLocation(p);
+      }
+      
+      public void removeLabel(){
+          label = null;
       }
       
       
