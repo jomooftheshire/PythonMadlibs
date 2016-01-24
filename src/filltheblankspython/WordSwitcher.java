@@ -102,30 +102,35 @@ public class WordSwitcher {
         word1.become(word2);
         word2.become(tempWord);
         
-        if (fIsKB == true && sIsKB == false){
-            kb.set(pos1, word2);
-            code.set(pos2, word1);
+//        if (fIsKB == true && sIsKB == false){
+//            kb.set(pos1, word2);
+//            code.set(pos2, word1);
+//        }
+//        else if (fIsKB == false && sIsKB == true){
+//            kb.set(pos2, word1);
+//            code.set(pos1, word2);
+//        }
+//        else if (fIsKB == true && sIsKB == true){
+//            kb.set(pos1, word2);
+//            kb.set(pos2, word1);
+//        }
+//        else {
+//            code.set(pos1, word2);
+//            code.set(pos2, word1);
+//        }     
+        Main.refresh(code, kb);
+    }
+    
+    void print(){
+        System.out.println("code:");
+        for(Word w : code){
+            System.out.println(w.getLabel().getText());
         }
-        else if (fIsKB == false && sIsKB == true){
-            kb.set(pos2, word1);
-            code.set(pos1, word2);
+        System.out.println("Keyboard:");
+        for(Word kb : kb){
+            System.out.println(kb.getLabel().getText());
         }
-        else if (fIsKB == true && sIsKB == true){
-            for(Word w : kb){
-                System.out.println(w.getWord());
-            }
-            kb.set(pos1, word2);
-            kb.set(pos2, word1);
-            for(Word w : kb){
-                System.out.println(w.getWord());
-            }
-        }
-        else {
-            code.set(pos1, word2);
-            code.set(pos2, word1);
-        }             
-        
-        //Main.refresh(code, kb);
+        System.out.println("--------------------------------------------------");
     }
     
     private int getPosition(Word word, ArrayList<Word> list){
