@@ -8,6 +8,7 @@ import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
 
@@ -209,7 +210,8 @@ private int taskNum, taskSize;
 
     private void btnCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckActionPerformed
         boolean finished = true;
-        boolean correct = true;
+        boolean correct = false;
+        ArrayList<JLabel> list = new ArrayList<>();
         Word word1;
         Word word2;
         for(Word word : screenCode){
@@ -220,6 +222,7 @@ private int taskNum, taskSize;
         
         if (finished == false) {
             JOptionPane.showMessageDialog(null, "Not all boxes filled!");
+            correct = false;
         }
         
         else {
@@ -235,6 +238,7 @@ private int taskNum, taskSize;
                     JLabel label = new JLabel();
                     label.setLocation(p);
                     label.setIcon(new javax.swing.ImageIcon(getClass().getResource("Images/alphaWrong.png")));
+                    list.add(label);
                 }
                 
                 else if ((word1.getWord().equals(word2.getWord())) && word1.isBlank() == false){
@@ -245,14 +249,30 @@ private int taskNum, taskSize;
                     JLabel label = new JLabel();
                     label.setLocation(p);
                     label.setIcon(new javax.swing.ImageIcon(getClass().getResource("Images/alphaCorrect.png")));
+                    list.add(label);
                 }
                 
-                if (correct == true){
+            }
+            //shows whats wrong or correct then hides the images again.
+            try{
+            TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException ex){
+                System.out.println("Sleep failed");
+            }
+            
+            for(JLabel lab : list){
+                lab.setVisible(false); // hides images.
+            }
+            
+        }
+        
+        if (correct == true){
                     JOptionPane.showMessageDialog(null, "Correct");
                     taskNum +=1;
                     newTask(taskNum);     //goes to next task
-                }
-            }
+                
+            
+            
         }
     }//GEN-LAST:event_btnCheckActionPerformed
 
@@ -400,17 +420,17 @@ private void newKeyboard(ArrayList<Word> k){
 //    }
     
     
-    public void getListeners(){
-        for(Word w : keyboard){
-            Object[] J = w.getLabel().getMouseListeners();
-            System.out.println(w.getWord() + ":" + J.length);
-        }
-        
-        for(Word w : code){
-            Object[] J = w.getLabel().getMouseListeners();
-            System.out.println(w.getWord() + ":" + J.length);
-        }
-    }
+//    public void getListeners(){
+//        for(Word w : keyboard){
+//            Object[] J = w.getLabel().getMouseListeners();
+//            System.out.println(w.getWord() + ":" + J.length);
+//        }
+//        
+//        for(Word w : code){
+//            Object[] J = w.getLabel().getMouseListeners();
+//            System.out.println(w.getWord() + ":" + J.length);
+//        }
+//    }
    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
