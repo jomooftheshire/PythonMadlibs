@@ -18,7 +18,7 @@ public class WordSwitcher {
     private ArrayList<Word> kb, code;
     private boolean lock; //puts a lock on to stop word1 pointing constantly being used.
     private int selectCounter;
-    private boolean w1exists = false, w2exists = false;
+    private boolean w1exists, w2exists;
  
     
     public WordSwitcher(){ 
@@ -26,18 +26,18 @@ public class WordSwitcher {
         selectCounter = 0;
         word1 = new Word(this);
         word2 = new Word(this);
+        w1exists = false;
+        w2exists = false;
     }
     
     public void setWord1(Word word){
         word1 = word;
-        //System.out.println("Word1: " + word.getWord() + word.isKeyboard());
         w1exists = true;
         lock = true;
     }
     
     public void setWord2(Word word){
         word2 = word;
-        //System.out.println("Word2: " + word.getWord() + word.isKeyboard());
         w2exists = true;
         lock = false;
     }
@@ -72,12 +72,7 @@ public class WordSwitcher {
         int pos1,pos2;
         Word tempWord;
         boolean fIsKB, sIsKB;   //f = first, s = second
-        Point one, two;
-        
-//        System.out.println();
-//        System.out.println("Word11abel: "+ word1.getLabelName());
-//        System.out.println("Word21abel: "+ word2.getLabelName());
-//        
+        Point one, two;       
         
         if(word1.getLabelName().contains("key")){
             pos1 = getPosition(word1, kb);
@@ -97,9 +92,6 @@ public class WordSwitcher {
             pos2 = getPosition(word2, code);
             sIsKB = false;
         }
-        
-        System.out.println("Words found:");
-        
         two = word2.getLabel().getLocation();
         one = word1.getLabel().getLocation();
         word1.setLabelPoint(two);
@@ -131,54 +123,29 @@ public class WordSwitcher {
         else {
             code.set(pos1, word2);
             code.set(pos2, word1);
-        }
+        }             
         
-        System.out.println("Switch Complete");
-        
-        //Main.refresh();
+        //Main.refresh(code, kb);
     }
     
-    
     private int getPosition(Word word, ArrayList<Word> list){
-//       System.out.println("--------------------------------------------------------------------------------------------");
-//       System.out.println("Element 0 of List: " + list.get(0).getLabelName() + "|| Word Label: " + word.getLabelName());
-//       System.out.println("List Size:" + list.size());
-//       for(Word w: list){
-//           System.out.println(w.getLabelName());
-//       }
-//       if(word.getLabelName().contains("code")){
-//            System.out.println(list.get(3).getLabelName());
-//       }
        int position = 0;
-       boolean found = false, finished = false;
+       boolean finished = false;
        while (finished == false && position < list.size()){
           
            if (word.getLabelName().equals(list.get(position).getLabelName())){
-               found = true;
                finished = true;     //used to stop IndexOutOfBoundsException
-               System.out.println("Word Found");
+               
            }
            else {
                position++;
            }
-          
-       }
-       if(found == false){
-           System.out.println("Word not found");
        }
        return position;
     }
     
     public void needSwitch(){
-//        System.out.println("Word1 exists:" + word1.isEmpty());
-//        System.out.println("Word2 exists:" + word2.isEmpty());
-        
-        //if ( //(word1.isEmpty()  == true || word2.isEmpty() == true){
-            
-        //}
-        //else {
         if (w1exists == true && w2exists == true){
-            System.out.println("Switch Started");
             changePlaces();
             word1.standardBorder();
             word2.standardBorder();
