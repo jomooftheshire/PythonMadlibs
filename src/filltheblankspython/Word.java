@@ -25,6 +25,7 @@ public class Word {
     private WordSwitcher switcher;
     private boolean empty;
     private boolean kb;
+    private boolean icon;
     //Mouse adapter for deleting purposes. May not be necessary
     private MouseAdapter ml = new MouseAdapter() {    
                @Override
@@ -167,6 +168,20 @@ public class Word {
       
       public void removeLabel(){
           label = null;
+      }
+      
+      public Word clone(){
+          Word w = new Word(switcher);
+          w.become(this);
+          return w;
+      }
+      
+      public void setIcon(boolean b){
+          icon = b;
+      }
+      
+      public boolean hasIcon(){
+          return icon;
       }
       
       
