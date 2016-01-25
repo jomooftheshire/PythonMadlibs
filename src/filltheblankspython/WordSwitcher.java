@@ -92,16 +92,23 @@ public class WordSwitcher {
             pos2 = getPosition(word2, code);
             sIsKB = false;
         }
-        two = word2.getLabel().getLocation();
-        one = word1.getLabel().getLocation();
-        word1.setLabelPoint(two);
-        word2.setLabelPoint(one);
+        
         
         tempWord = new Word(this);
         tempWord.become(word1);
         word1.become(word2);
         word2.become(tempWord);
         
+        //test();
+        
+        two = word2.getLabel().getLocation();
+        one = word1.getLabel().getLocation();
+        word1.setLabelPoint(two);
+        word2.setLabelPoint(one);
+        
+        //test();
+        
+//this is not flipping it in the arrayLists    
 //        if (fIsKB == true && sIsKB == false){
 //            kb.set(pos1, word2);
 //            code.set(pos2, word1);
@@ -118,7 +125,31 @@ public class WordSwitcher {
 //            code.set(pos1, word2);
 //            code.set(pos2, word1);
 //        }     
+//       
+        
+        
         Main.refresh(code, kb);
+    }
+    
+    
+    void test(){
+        ArrayList<Word> tempC = new ArrayList<>(code);
+        ArrayList<Word> tempKB = new ArrayList<>(kb);
+        
+        System.out.println("Code:\t Old||New");
+        for(int i=0;i<code.size();i++){
+           Word wN = code.get(i);
+           Word wO = tempC.get(i);
+            System.out.println(wO.getLabelName()+":"+wO.getWord()+"\t||\t"+wN.getLabelName()+":"+wN.getWord());
+                }
+        System.out.println();
+         System.out.println("KB:\t Old||New");
+        for(int i=0;i<kb.size();i++){
+           Word wN = kb.get(i);
+           Word wO = tempKB.get(i);
+            System.out.println(wO.getLabelName()+":"+wO.getWord()+"\t||\t"+wN.getLabelName()+":"+wN.getWord());
+                }
+        System.out.println("--------------------------------------------------------------");
     }
     
     void print(){
