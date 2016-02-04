@@ -38,11 +38,12 @@ public class Word {
                };
     
    
-    public Word(String w, boolean b, WordSwitcher s){
+    public Word(String w, boolean b, WordSwitcher s, boolean keyboard){
         word = w;
         blank = b;
         switcher = s;
         empty = false;
+        kb = keyboard;
     }
     
     public Word(WordSwitcher s){
@@ -72,8 +73,7 @@ public class Word {
         blank = bool;
     }
     
-     public void newLabel (int x, int y, boolean keyboard, String name){
-        kb = keyboard;
+     public void newLabel (int x, int y, String name){
         label = new JLabel();
         label.setName(name);
         label.setLocation(x, y);
@@ -82,7 +82,8 @@ public class Word {
         label.setVisible(true);
         label.setText(getWord());       
         label.setHorizontalTextPosition(SwingConstants.CENTER);
-        if (keyboard == false && isBlank() == false){
+        
+        if (kb == false && isBlank() == false){
             label.setFocusable(false);
         }
         
@@ -180,8 +181,16 @@ public class Word {
           icon = b;
       }
       
+      public void setKB(boolean keyb){
+          kb = keyb;
+      }
+      
       public boolean hasIcon(){
           return icon;
+      }
+      
+      public boolean getKB(){
+          return kb;
       }
       
       
