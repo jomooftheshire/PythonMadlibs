@@ -1,0 +1,5 @@
+print :: A function used to output messages to the commandline
+eval :: Used to change a value to numeric
+* :: Multiplication symbol
+/ :: Division symbol
+import :: Used to access methods from other python modules to be used in the current module
