@@ -6,6 +6,7 @@
 package filltheblankspython;
 import java.util.ArrayList;
 import java.io.File;
+import java.util.Map;
 
 /**
  *
@@ -17,6 +18,7 @@ public class Data {
     private ArrayList<ArrayList> keyboardList;
     private ArrayList<File> filesFound;
     private WordSwitcher switcher;
+    private Map dictionary;
     
     
     public Data(WordSwitcher ws){
@@ -26,6 +28,7 @@ public class Data {
         tasks = new ArrayList<>();
         codeList = new ArrayList<>();
         keyboardList = new ArrayList<>();
+        setDictionary();
         setInfo(filesFound);
     }
     
@@ -47,6 +50,15 @@ public class Data {
     public int getTasksSize(){
         //to be used to tell the program how many functions there are
         return tasks.size();
+    }
+    
+    public Map getDictionary(){
+        return dictionary;
+    }
+    
+    private void setDictionary(){
+        File dir = new File("./dictionary.txt");
+        
     }
     
     private ArrayList<File> findFiles(){
