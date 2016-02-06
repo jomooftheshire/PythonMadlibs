@@ -24,9 +24,10 @@ public class Main extends javax.swing.JDialog {
 private Data data;
 private ArrayList<Word> code;
 private static ArrayList<Word> screenCode;
-private static ArrayList<Word> keyboard;
+private ArrayList<Word> keyboard;
 private static WordSwitcher switcher;
 private int taskNum, taskSize;
+private static ArrayList<Word> screenKB;
    
 /**
      * Creates new form Main
@@ -76,7 +77,8 @@ private int taskNum, taskSize;
         panelTask.setPreferredSize(new java.awt.Dimension(420, 600));
 
         lblTask.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        lblTask.setText("jLabel1");
+        lblTask.setText("Task:");
+        lblTask.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblTask.setSize(panelTask.getWidth(), panelTask.getHeight());
         lblTask.setMaximumSize(lblTask.getSize());
 
@@ -86,15 +88,15 @@ private int taskNum, taskSize;
             panelTaskLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelTaskLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblTask)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(lblTask, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         panelTaskLayout.setVerticalGroup(
             panelTaskLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTaskLayout.createSequentialGroup()
+            .addGroup(panelTaskLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblTask)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(lblTask, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         panelKeyboard.setBackground(new java.awt.Color(204, 204, 255));
@@ -121,7 +123,7 @@ private int taskNum, taskSize;
         panelCode.setLayout(panelCodeLayout);
         panelCodeLayout.setHorizontalGroup(
             panelCodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1495, Short.MAX_VALUE)
+            .addGap(0, 1500, Short.MAX_VALUE)
         );
         panelCodeLayout.setVerticalGroup(
             panelCodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -163,7 +165,7 @@ private int taskNum, taskSize;
             .addGroup(panelFunctionLayout.createSequentialGroup()
                 .addGap(179, 179, 179)
                 .addComponent(lblNum)
-                .addContainerGap(199, Short.MAX_VALUE))
+                .addContainerGap(221, Short.MAX_VALUE))
         );
         panelFunctionLayout.setVerticalGroup(
             panelFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -177,8 +179,8 @@ private int taskNum, taskSize;
                 .addGap(68, 68, 68))
         );
 
-        btnCheck.getAccessibleContext().setAccessibleName("btnCheck");
-        btnRemove.getAccessibleContext().setAccessibleName("btnRemove");
+        btnCheck.setToolTipText("Check Answers");
+        btnRemove.setToolTipText("Refresh Screen");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -230,59 +232,23 @@ private int taskNum, taskSize;
             for (int i = 0; i < code.size(); i++){
                 word1 = screenCode.get(i);
                 word2 = code.get(i);
-                //System.out.println(word1.getWord()+ "\t::\t"+word2.getWord());
                 
                 if (!(word1.getWord().equals(word2.getWord()))){ //reversers the output so it checks if false;
                     correct = false;
-                    JOptionPane.showMessageDialog(null, "Incorrect");
                     word1.getLabel().setIcon(new javax.swing.ImageIcon(getClass().getResource("Images/alphaWrong.png")));
                     word1.setIcon(true);
-//                    int x, y;
-//                    x = word1.getX();
-//                    y = word1.getY();
-//                    Point p = new Point(x, y);
-//                    JLabel label = new JLabel();
-//                    panelCode.add(label);
-//                    label.setLocation(p);
-//                    label.setIcon(new javax.swing.ImageIcon(getClass().getResource("Images/alphaWrong.png")));
-//                    list.add(label);
-//                    label.add(word1.getLabel());
                 }
                 
                 else if ((word1.getWord().equals(word2.getWord())) && word1.isBlank() == false){
-                    if(word1.getLabel().isFocusable()){
+                    if(word1.getLabel().isFocusable()){             //issue with this
                         word1.getLabel().setIcon(new javax.swing.ImageIcon(getClass().getResource("Images/alphaRight.png")));
                         word1.setIcon(true);
                     }
-//                    int x, y;
-//                    x = word1.getX();
-//                    y = word1.getY();
-//                    Point p = new Point(x, y);
-//                    JLabel label = new JLabel();
-//                    panelCode.add(label);
-//                    label.setLocation(p);
-//                    label.setIcon(new javax.swing.ImageIcon(getClass().getResource("Images/alphaRight.png")));
-//                    list.add(label);
-//                    label.add(word1.getLabel());
-                    
                 }
                 
             }
             //shows whats wrong or correct then hides the images again.
-            try{
-            TimeUnit.SECONDS.sleep(3);
-            for(Word w : screenCode){
-                if(w.hasIcon()){
-                   w.getLabel().setIcon(null);
-                   w.setIcon(false);
-                   w.getLabel().revalidate();
-                }
-            }
-            } catch (InterruptedException ex){
-                System.out.println("Sleep failed");
-            }
-        
-            newCode(screenCode);                //redraws the cod
+            
         
         if (correct == true){
                     System.out.println("Correct");
@@ -295,26 +261,27 @@ private int taskNum, taskSize;
         
         else {
             System.out.println("NOT CORRECT");
-            //System.out.println("ScreenCode\t::\tCode");
-            //for(int i=0; i < code.size(); i++){
-            //    Word s1 = screenCode.get(i);
-            //    Word s2 = screenCode.get(i);
-                //System.out.println(s1.getWord() + "\t::\t" + s2.getWord());
-                //System.out.println(boolToStr(s1) + "\t::\t" + boolToStr(s2));
+            JOptionPane.showMessageDialog(null, "Incorrect");
             }
+        
+        try{
+              TimeUnit.SECONDS.sleep(2);
+              for(Word w : screenCode){
+                if(w.hasIcon()){
+                   w.getLabel().setIcon(null);
+                   w.setIcon(false);
+                   w.getLabel().revalidate();
+                }
+            }
+            } catch (InterruptedException ex){
+                System.out.println("Sleep failed");
+            }
+        
+            newCode(screenCode);                //redraws the cod
+        
         }
     }//GEN-LAST:event_btnCheckActionPerformed
 
-//    String boolToStr(Word w){
-//        String bool;
-//        if(w.isBlank()){
-//            bool = "true";
-//        }
-//        else {
-//            bool = "false";
-//        }
-//        return bool;
-//    }
     
     private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveActionPerformed
         removeComponents(panelCode);
@@ -377,18 +344,22 @@ private int taskNum, taskSize;
         //code = new ArrayList<>();
         keyboard = new ArrayList<>();
         setLblNum(taskNum, taskSize);
-        keyboard = data.getKeyboard(level);    //shallow copy
-        Collections.shuffle(keyboard);         //shuffles the keyboard contents.
+        keyboard = data.getKeyboard(level); //shallow copy
+        screenKB = new ArrayList<Word>();
+        for(Word w : keyboard){
+            screenKB.add(w.clone());
+        }
+        Collections.shuffle(screenKB);         //shuffles the keyboard contents.
+        
         code = data.getCode(level);
         screenCode = new ArrayList<Word>(); //contains the information that will change.
-        
         for(Word w : code){
             screenCode.add(w.clone());
         }
         
         String task = data.getTask(level);
         lblTask.setText(task);
-        setup(screenCode, keyboard);
+        setup(screenCode, screenKB);
         
     }
     
@@ -400,11 +371,14 @@ private int taskNum, taskSize;
     
     public static void refresh(ArrayList<Word> c, ArrayList<Word> kb){
         //This take is used to be able to update the UI when switch has takn place.
-        keyboard = new ArrayList<>(switcher.getKeyboard());
+        screenKB = new ArrayList<>(switcher.getKeyboard());
         screenCode = new ArrayList<>(switcher.getCode());
         removeComponents(panelCode);
         removeComponents(panelKeyboard);
         setup(c, kb);
+        for(Word w : screenCode){
+            System.out.println(w.getWord() + "||" + w.getLabel().isFocusable());
+        }
     }
     
     private static void newCode(ArrayList<Word> c){
@@ -418,12 +392,12 @@ private int taskNum, taskSize;
             if (word.getWord().equals("@newline@")){
                 yCoord+=60;
                 xCoord = panelCode.getX();
-                word.newLabel(0, 0, false, name);
+                word.newLabel(0, 0, name);
                 word.getLabel().setVisible(false);
             }
             else {
                 boolean kb = false;         //determines if keyboard to have those special options in the new label.
-                word.newLabel(xCoord, yCoord, kb, name);
+                word.newLabel(xCoord, yCoord, name);
                 word.setLabelName(name);
                 panelCode.add(word.getLabel());
                 xCoord+=50;
@@ -439,7 +413,7 @@ private static void newKeyboard(ArrayList<Word> k){
         int num=0;
         for (Word word : k){
             String name = "key"+num;
-            word.newLabel(xCoord, yCoord, true, name);
+            word.newLabel(xCoord, yCoord, name);
             word.setLabelName(name);
             panelKeyboard.add(word.getLabel());
             xCoord+=50;
