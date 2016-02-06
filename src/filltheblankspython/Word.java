@@ -23,8 +23,8 @@ public class Word {
     private JLabel label;
     private int xCoord, yCoord;
     private WordSwitcher switcher;
-    private boolean empty;
-    private boolean kb;
+    private final boolean empty;
+    private final boolean kb;
     private boolean icon;
     //Mouse adapter for deleting purposes. May not be necessary
     private MouseAdapter ml = new MouseAdapter() {    
@@ -49,6 +49,7 @@ public class Word {
     public Word(WordSwitcher s){
         switcher = s;
         empty = true;
+        kb = false;
     };
     
     public boolean isEmpty(){
@@ -181,9 +182,9 @@ public class Word {
           icon = b;
       }
       
-      public void setKB(boolean keyb){
-          kb = keyb;
-      }
+//      public void setKB(boolean keyb){
+//          kb = keyb;
+//      }
       
       public boolean hasIcon(){
           return icon;
