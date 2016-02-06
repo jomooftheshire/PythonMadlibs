@@ -40,7 +40,7 @@ public class Parser {
                 else {
                     String[] words = StringChopper(s);
                     setWordList(words);
-                    Word eol = new Word("@newline@", false, switcher);           //shows there needs to be a new line, new WordSwitcher just a place holder.
+                    Word eol = new Word("@newline@", false, switcher, false);           //shows there needs to be a new line, new WordSwitcher just a place holder.
                     code.add(eol);
                 }
                 
@@ -59,14 +59,15 @@ public class Parser {
     
     private void setWordList(String[] words){
         for(String word : words){
-            Word w = new Word(word, false, switcher);
+            Word w = new Word(word, false, switcher, false);
             if(word.startsWith("!") && word.endsWith("!")){
                 w.setBlank(true);
                 w.setWord(word.replaceAll("!", ""));
                 
-                Word kb = new Word(switcher);           //new instance of word
-                kb.become(w);
-                kb.setBlank(false);
+                Word kb = new Word(w.getWord(), false, switcher, true);           //new instance of word
+                //kb.become(w);
+                //kb.setBlank(false);
+                //kb.setKB(true);     //used to state the word is keybaord.
                 keyboard.add(kb);
             }
             code.add(w);
