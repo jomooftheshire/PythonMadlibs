@@ -4,9 +4,14 @@
  * and open the template in the editor.
  */
 package filltheblankspython;
+import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -17,18 +22,22 @@ public class Data {
     private ArrayList<ArrayList> codeList;
     private ArrayList<ArrayList> keyboardList;
     private ArrayList<File> filesFound;
+    private ArrayList<String> funcList;
     private WordSwitcher switcher;
-    private Map dictionary;
+    private HashMap dictionary;
+    static Parser parser; //testing
     
     
     public Data(WordSwitcher ws){
         switcher = ws;
+        dictionary = new HashMap<String, String>();
+        funcList = new ArrayList<>();
+        setDictionary();
         filesFound = new ArrayList<>();
         filesFound = findFiles();
         tasks = new ArrayList<>();
         codeList = new ArrayList<>();
         keyboardList = new ArrayList<>();
-        setDictionary();
         setInfo(filesFound);
     }
     
@@ -52,13 +61,27 @@ public class Data {
         return tasks.size();
     }
     
-    public Map getDictionary(){
+    public HashMap getDictionary(){
         return dictionary;
     }
     
+    public ArrayList<String> getFunctionList(){
+        return funcList;
+    }
+    
     private void setDictionary(){
-        File dir = new File("./dictionary.txt");
-        
+        //Sets the dictionary that is used for the tool tip over words.
+        File dir = new File("./Files/dictionary/dictionary.txt");
+        try (BufferedReader br = Files.newBufferedReader(dir.toPath())) {
+            String s = null;
+            while ((s = br.readLine()) != null){
+                String[] def = s.split("\\s::\\s"); 
+                dictionary.put(def[0], def[1]);
+                funcList.add(def[0]);
+            }
+        } catch (IOException x){
+            System.err.format("IOException: %s%n", x);
+        }
     }
     
     private ArrayList<File> findFiles(){
@@ -69,13 +92,17 @@ public class Data {
                   textFiles.add(file);
               }
             }
+          if(textFiles.size() == 0){
+              JOptionPane.showMessageDialog(null, "No files found!");
+          }
           return textFiles;
     }
 
     
     private void setInfo(ArrayList<File> filesFound){
         for (File file : filesFound){
-            Parser p = new Parser(file, switcher);
+            Parser p = new Parser(file, switcher, dictionary);
+            parser = p; //delete this. Testing only.
             tasks.add(p.getTask());
             codeList.add(p.getCodeList());
             keyboardList.add(p.getKeyboardList());
@@ -95,5 +122,9 @@ public class Data {
 //        for(Word kw : k){
 //            System.out.println(kw.getWord());
 //        }
-//    }    
+//    }  
+    
+    static Parser getParser(){
+        return parser;
+    }
 }

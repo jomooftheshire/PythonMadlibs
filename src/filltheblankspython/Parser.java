@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 /**
  *
  * @author Joshua Mulcock
@@ -20,12 +21,15 @@ public class Parser {
     private ArrayList<Word> code;
     private String task;
     private WordSwitcher switcher;
+    private HashMap<String,String> dictionary;
+    static Word temp; //delete
     
-    public Parser(File f, WordSwitcher ws){
+    public Parser(File f, WordSwitcher ws, HashMap<String, String> dic){
         File file = f;
         switcher = ws;
         keyboard = new ArrayList<Word>();
         code = new ArrayList<Word>();    
+        dictionary = dic;
         inputData(file);
     }
     
@@ -40,7 +44,7 @@ public class Parser {
                 else {
                     String[] words = StringChopper(s);
                     setWordList(words);
-                    Word eol = new Word("@newline@", false, switcher, false);           //shows there needs to be a new line, new WordSwitcher just a place holder.
+                    Word eol = new Word("@newline@", false, switcher, false, dictionary);           //shows there needs to be a new line, new WordSwitcher just a place holder.
                     code.add(eol);
                 }
                 
@@ -59,12 +63,13 @@ public class Parser {
     
     private void setWordList(String[] words){
         for(String word : words){
-            Word w = new Word(word, false, switcher, false);
+            Word w = new Word(word, false, switcher, false, dictionary);
             if(word.startsWith("!") && word.endsWith("!")){
                 w.setBlank(true);
                 w.setWord(word.replaceAll("!", ""));
                 
-                Word kb = new Word(w.getWord(), false, switcher, true);           //new instance of word
+                Word kb = new Word(w.getWord(), false, switcher, true, dictionary);  //new instance of word
+                //System.out.println(w.getWord() + ":" + w);
                 //kb.become(w);
                 //kb.setBlank(false);
                 //kb.setKB(true);     //used to state the word is keybaord.
@@ -72,6 +77,7 @@ public class Parser {
             }
             code.add(w);
         }
+        setTempWord(keyboard.get(0));
     }
     
     public ArrayList<Word> getKeyboardList(){
@@ -84,5 +90,13 @@ public class Parser {
     
     public String getTask(){
         return task;
+    }
+    
+    public void setTempWord(Word w){
+        temp = w;
+    }
+    
+    static Word getTempWord(){
+        return temp;
     }
 }

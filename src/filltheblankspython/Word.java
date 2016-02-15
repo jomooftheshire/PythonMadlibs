@@ -6,9 +6,12 @@
 package filltheblankspython;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -26,24 +29,40 @@ public class Word {
     private final boolean empty;
     private final boolean kb;
     private boolean icon;
+    private String list; //States what word the list belongs to (keyboard or code);
+    private HashMap<String, String> dictionary;
     //Mouse adapter for deleting purposes. May not be necessary
     private MouseAdapter ml = new MouseAdapter() {    
                @Override
                public void mousePressed(MouseEvent e) {
-                   
                         label.setBorder(BorderFactory.createDashedBorder(Color.BLUE));
                         selected();
-                        
+                        //This will make it flash
+                        if(list.equals("kb")){
+                            Main.focusCode();
+                        }
+                        else if(list.equals("code")){
+                            Main.focusKB();
+                        }
+                        else{
+                            System.out.println("NO LIST!");
+                        }
                    }
                };
     
    
-    public Word(String w, boolean b, WordSwitcher s, boolean keyboard){
+    public Word(String w, boolean b, WordSwitcher s, boolean keyboard, HashMap<String, String> dic){
         word = w;
         blank = b;
         switcher = s;
         empty = false;
         kb = keyboard;
+        //dictionary.clone()
+        dictionary = dic; //.clone();
+        if(dictionary.isEmpty()){
+            System.out.println("Dictionary Null");
+        }
+            
     }
     
     public Word(WordSwitcher s){
@@ -54,12 +73,6 @@ public class Word {
     
     public boolean isEmpty(){
         return empty;
-    }
-    
-    public void become(Word old){ //cloning method
-        word = old.getWord();
-        blank = old.isBlank();
-        label = old.getLabel();
     }
     
     public String getWord(){
@@ -79,18 +92,30 @@ public class Word {
         label.setName(name);
         label.setLocation(x, y);
         label.setFocusable(true);
-        label.setSize(50, 30);
+        //label.setSize(50, 30);
         label.setVisible(true);
-        label.setText(getWord());       
-        label.setHorizontalTextPosition(SwingConstants.CENTER);
+        label.setText(getWord());
+        label.setFont(new Font("Monospace", Font.PLAIN, 30));
+        if (isBlank()){
+            label.setText("____");
+        }
+        
+        else {
+            if(dictionary.containsKey(getWord())){
+                label.setToolTipText(dictionary.get(getWord()));
+            }
+            else {
+                label.setToolTipText("NOT FOUND");
+            }
+        }
+        
+        Dimension d = new Dimension(label.getPreferredSize().width + 5, label.getPreferredSize().height);       //+5 to solve the border issue
+            label.setMaximumSize(d);
+            label.setMinimumSize(d);
+            label.setSize(d);
         
         if (kb == false && isBlank() == false){
             label.setFocusable(false);
-        }
-        
-        else if (isBlank()){
-            label.setText("_____");
-            standardBorder();
         }
         
         else {
@@ -127,7 +152,7 @@ public class Word {
      }
      
       public void setLabelName(String name){
-        label.setName(name);
+            label.setName(name);
       }
       
       
@@ -153,7 +178,12 @@ public class Word {
       }
       
       public String getLabelName(){
-          return label.getName();
+          try {
+            return label.getName();
+        }
+          catch(java.lang.NullPointerException x){
+              return null;
+          }
       }
       
       public void printName(){
@@ -164,6 +194,7 @@ public class Word {
           return kb; 
       }
       
+      
       public void setLabelPoint(Point p){
           label.setLocation(p);
       }
@@ -173,8 +204,9 @@ public class Word {
       }
       
       public Word clone(){
-          Word w = new Word(switcher);
-          w.become(this);
+          Word w = new Word(word, blank, switcher, kb, dictionary);
+          w.setLabel(getLabel());
+          //w.become(this);
           return w;
       }
       
@@ -182,9 +214,9 @@ public class Word {
           icon = b;
       }
       
-//      public void setKB(boolean keyb){
-//          kb = keyb;
-//      }
+      public void setLabel(JLabel lbl){
+          label = lbl;
+      }
       
       public boolean hasIcon(){
           return icon;
@@ -192,6 +224,10 @@ public class Word {
       
       public boolean getKB(){
           return kb;
+      }
+      
+      public void setList(String l){
+          list = l;
       }
       
       

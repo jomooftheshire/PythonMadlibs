@@ -4,14 +4,18 @@
  * and open the template in the editor.
  */
 package filltheblankspython;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Panel;
 import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 
@@ -21,13 +25,14 @@ import javax.swing.*;
  * @author Joshua Mulcock
  */
 public class Main extends javax.swing.JDialog {
-private Data data;
+private static Data data; //edit this static
 private ArrayList<Word> code;
 private static ArrayList<Word> screenCode;
 private ArrayList<Word> keyboard;
 private static WordSwitcher switcher;
 private int taskNum, taskSize;
 private static ArrayList<Word> screenKB;
+static int spaceX, spaceY; 
    
 /**
      * Creates new form Main
@@ -38,6 +43,8 @@ private static ArrayList<Word> screenKB;
         //parent.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         switcher = new WordSwitcher();
         data = new Data(switcher);
+        spaceX = lblSpace.getWidth();    //spacing to be used to place next Jlabel once the JLbael is the size of the text in code.
+        spaceY = lblSpace.getHeight() + 10;
         taskSize = data.getTasksSize();
         taskNum = 0;
         newTask(taskNum);
@@ -61,22 +68,23 @@ private static ArrayList<Word> screenKB;
 
         panelTask = new java.awt.Panel();
         lblTask = new javax.swing.JLabel();
-        panelKeyboard = new java.awt.Panel();
-        panelCode = new java.awt.Panel();
+        panelCode = new javax.swing.JPanel();
+        panelKeyboard = new javax.swing.JPanel();
         panelFunction = new javax.swing.JPanel();
-        btnCheck = new javax.swing.JButton();
         btnRemove = new javax.swing.JButton();
+        btnCheck = new javax.swing.JButton();
         lblNum = new javax.swing.JLabel();
+        lblSpace = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1920, 1080));
+        setPreferredSize(new java.awt.Dimension(1200, 620));
 
         panelTask.setBackground(new java.awt.Color(204, 204, 255));
         panelTask.setMaximumSize(new java.awt.Dimension(420, 600));
         panelTask.setMinimumSize(new java.awt.Dimension(420, 600));
         panelTask.setPreferredSize(new java.awt.Dimension(420, 600));
 
-        lblTask.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        lblTask.setFont(new java.awt.Font("Times New Roman", 2, 24)); // NOI18N
         lblTask.setText("Task:");
         lblTask.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lblTask.setSize(panelTask.getWidth(), panelTask.getHeight());
@@ -86,54 +94,49 @@ private static ArrayList<Word> screenKB;
         panelTask.setLayout(panelTaskLayout);
         panelTaskLayout.setHorizontalGroup(
             panelTaskLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelTaskLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblTask, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(lblTask, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panelTaskLayout.setVerticalGroup(
             panelTaskLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelTaskLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblTask, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        panelKeyboard.setBackground(new java.awt.Color(204, 204, 255));
-        panelKeyboard.setMaximumSize(new java.awt.Dimension(1500, 400));
-        panelKeyboard.setPreferredSize(new java.awt.Dimension(1500, 400));
-
-        javax.swing.GroupLayout panelKeyboardLayout = new javax.swing.GroupLayout(panelKeyboard);
-        panelKeyboard.setLayout(panelKeyboardLayout);
-        panelKeyboardLayout.setHorizontalGroup(
-            panelKeyboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1495, Short.MAX_VALUE)
-        );
-        panelKeyboardLayout.setVerticalGroup(
-            panelKeyboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+                .addComponent(lblTask, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(189, 189, 189))
         );
 
         panelCode.setBackground(new java.awt.Color(204, 204, 255));
-        panelCode.setMaximumSize(new java.awt.Dimension(900, 400));
-        panelCode.setMinimumSize(new java.awt.Dimension(900, 400));
-        panelCode.setPreferredSize(new java.awt.Dimension(900, 400));
 
         javax.swing.GroupLayout panelCodeLayout = new javax.swing.GroupLayout(panelCode);
         panelCode.setLayout(panelCodeLayout);
         panelCodeLayout.setHorizontalGroup(
             panelCodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1500, Short.MAX_VALUE)
+            .addGap(0, 1036, Short.MAX_VALUE)
         );
         panelCodeLayout.setVerticalGroup(
             panelCodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 670, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        panelKeyboard.setBackground(new java.awt.Color(204, 204, 255));
+
+        javax.swing.GroupLayout panelKeyboardLayout = new javax.swing.GroupLayout(panelKeyboard);
+        panelKeyboard.setLayout(panelKeyboardLayout);
+        panelKeyboardLayout.setHorizontalGroup(
+            panelKeyboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        panelKeyboardLayout.setVerticalGroup(
+            panelKeyboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         panelFunction.setBackground(new java.awt.Color(204, 204, 255));
-        panelFunction.setMaximumSize(new java.awt.Dimension(320, 400));
-        panelFunction.setMinimumSize(new java.awt.Dimension(320, 400));
-        panelFunction.setPreferredSize(new java.awt.Dimension(320, 400));
+
+        btnRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/alphaCross.png"))); // NOI18N
+        btnRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoveActionPerformed(evt);
+            }
+        });
 
         btnCheck.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/alphaTick.png"))); // NOI18N
         btnCheck.setName("btnCheck"); // NOI18N
@@ -143,44 +146,42 @@ private static ArrayList<Word> screenKB;
             }
         });
 
-        btnRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/alphaCross.png"))); // NOI18N
-        btnRemove.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRemoveActionPerformed(evt);
-            }
-        });
-
+        lblNum.setFont(new java.awt.Font("Tahoma", 0, 30)); // NOI18N
         lblNum.setText("? / ?");
+
+        lblSpace.setFont(new java.awt.Font("Monospaced", 0, 30)); // NOI18N
+        lblSpace.setText(" ");
 
         javax.swing.GroupLayout panelFunctionLayout = new javax.swing.GroupLayout(panelFunction);
         panelFunction.setLayout(panelFunctionLayout);
         panelFunctionLayout.setHorizontalGroup(
             panelFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelFunctionLayout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelFunctionLayout.createSequentialGroup()
                 .addComponent(btnCheck)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnRemove)
-                .addContainerGap())
-            .addGroup(panelFunctionLayout.createSequentialGroup()
-                .addGap(179, 179, 179)
+                .addComponent(btnRemove))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelFunctionLayout.createSequentialGroup()
+                .addContainerGap(194, Short.MAX_VALUE)
                 .addComponent(lblNum)
-                .addContainerGap(221, Short.MAX_VALUE))
+                .addGap(105, 105, 105)
+                .addComponent(lblSpace)
+                .addGap(70, 70, 70))
         );
         panelFunctionLayout.setVerticalGroup(
             panelFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelFunctionLayout.createSequentialGroup()
+            .addGroup(panelFunctionLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblNum)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(panelFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblSpace)
+                    .addComponent(lblNum))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
                 .addGroup(panelFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnRemove)
-                    .addComponent(btnCheck))
-                .addGap(68, 68, 68))
+                    .addComponent(btnRemove, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnCheck, javax.swing.GroupLayout.Alignment.TRAILING)))
         );
 
-        btnCheck.setToolTipText("Check Answers");
         btnRemove.setToolTipText("Refresh Screen");
+        btnCheck.setToolTipText("Check Answers");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -189,7 +190,7 @@ private static ArrayList<Word> screenKB;
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelTask, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelFunction, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE))
+                    .addComponent(panelFunction, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelCode, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -198,11 +199,11 @@ private static ArrayList<Word> screenKB;
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelCode, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelTask, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(panelTask, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panelCode, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelKeyboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panelFunction, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
@@ -289,7 +290,7 @@ private static ArrayList<Word> screenKB;
         newTask(taskNum);
     }//GEN-LAST:event_btnRemoveActionPerformed
 
-    private static void removeComponents(Panel p){
+    private static void removeComponents(JPanel p){
         Component[] panel = p.getComponents();
         for(Component comp : panel){
             p.remove(comp);
@@ -342,23 +343,18 @@ private static ArrayList<Word> screenKB;
     
     private void newTask(int level) {
         //code = new ArrayList<>();
-        keyboard = new ArrayList<>();
+        //keyboard = new ArrayList<>();
         setLblNum(taskNum, taskSize);
         keyboard = data.getKeyboard(level); //shallow copy
-        screenKB = new ArrayList<Word>();
-        for(Word w : keyboard){
-            screenKB.add(w.clone());
-        }
-        Collections.shuffle(screenKB);         //shuffles the keyboard contents.
+        screenKB = new ArrayList<Word>(keyboard);
+        int n = 10 - keyboard.size();
+        screenKB.addAll(getRandomKeyboard(n));
         
         code = data.getCode(level);
-        screenCode = new ArrayList<Word>(); //contains the information that will change.
-        for(Word w : code){
-            screenCode.add(w.clone());
-        }
+        screenCode = new ArrayList<Word>(code); //contains the information that will change.
         
         String task = data.getTask(level);
-        lblTask.setText(task);
+        lblTask.setText("<html><p>"+task+"</p></html>");    //html used for automatic wrapping
         setup(screenCode, screenKB);
         
     }
@@ -366,6 +362,31 @@ private static ArrayList<Word> screenKB;
     private static void setup(ArrayList<Word> c, ArrayList<Word> kb){
         newCode(c);
         newKeyboard(kb);  
+    }
+    
+    private static void lblFlash(ArrayList<Word> list){
+        //makes a set of Jlabels flash to direct the player to where they should click.
+        for(int i=0; i < 5; i++){
+            for(Word w : list){
+                w.getLabel().setBackground(Color.yellow);
+            }
+            try {
+                TimeUnit.MILLISECONDS.sleep(350);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            for(Word w : list){
+                w.getLabel().setBackground(null);
+            }
+        }
+    }
+    
+    public static void focusKB(){
+        lblFlash(screenKB);
+    }
+    
+    public static void focusCode(){
+        lblFlash(screenCode);
     }
     
     
@@ -376,60 +397,96 @@ private static ArrayList<Word> screenKB;
         removeComponents(panelCode);
         removeComponents(panelKeyboard);
         setup(c, kb);
-        for(Word w : screenCode){
-            System.out.println(w.getWord() + "||" + w.getLabel().isFocusable());
-        }
     }
     
     private static void newCode(ArrayList<Word> c){
         switcher.setCodeList(c);
-        int xCoord = panelCode.getX();
-        int yCoord = panelCode.getY();
+        int xCoord = 20;
+        int yCoord = 0;
         int num = 0;
         for(Word word : c) {
-            String name = "code" + num;
-            //System.out.println("Word:" + word.getWord());
+            
             if (word.getWord().equals("@newline@")){
-                yCoord+=60;
-                xCoord = panelCode.getX();
-                word.newLabel(0, 0, name);
+                yCoord+=spaceY;
+                xCoord = 20;
+                word.newLabel(0, 0, null);            
                 word.getLabel().setVisible(false);
             }
             else {
-                boolean kb = false;         //determines if keyboard to have those special options in the new label.
+                word.setList("code");
+                String name = "code" + num;
+                num++;  
+                boolean kb = false;         //determines if keyboard to have those special options in the new label. Moved to constructor of word.
                 word.newLabel(xCoord, yCoord, name);
                 word.setLabelName(name);
                 panelCode.add(word.getLabel());
-                xCoord+=50;
+                xCoord += word.getLabel().getWidth() + spaceX; // this makes sure there is a space inbetween 
             }
-            num++;
         }
     }
     
 private static void newKeyboard(ArrayList<Word> k){
         switcher.setKeyboardList(k);
-        int xCoord = 0;
+        int xCoord = 20;
         int yCoord = 0;
         int num=0;
+        int gap = (panelKeyboard.getWidth() - 60) / k.size();
+        System.out.println("K:"+k.size());
+        //checker(k); //delete this
         for (Word word : k){
+            word.setList("kb"); //this is telling that the word belongs to KB.
+            //System.out.println(word.getWord() + ":" + word);
             String name = "key"+num;
             word.newLabel(xCoord, yCoord, name);
             word.setLabelName(name);
             panelKeyboard.add(word.getLabel());
-            xCoord+=50;
+            xCoord+=gap; //equal width apart for number of objects but including random notatin 
             num++;
         }
         
     }
 
+    private ArrayList<Word> getRandomKeyboard(int n){
+        ArrayList<Word> list = new ArrayList<>();
+        ArrayList<String> funcList = data.getFunctionList();
+        Random rnd = new Random();
+        int size = funcList.size();
+        String s;
+        for (int i = 0; i < n; i++){
+            s = funcList.get(rnd.nextInt(size));
+            System.out.println(s);
+            Word w = new Word(s, false, switcher, true, data.getDictionary());
+            list.add(w);
+        }
+        return list;
+    }
+
+        static void checker(ArrayList<Word> k){
+            if(k.get(0) == data.getParser().getTempWord()){
+                System.out.println("Same location");
+            }
+            else{
+                System.out.println("Different Location");
+            }
+            
+            if(k.get(0).equals(data.getParser().getTempWord())){
+                System.out.println("Same object");
+            }
+            else {
+                System.out.println("Different Object");
+            }
+            
+        }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCheck;
     private javax.swing.JButton btnRemove;
     private javax.swing.JLabel lblNum;
+    private javax.swing.JLabel lblSpace;
     private javax.swing.JLabel lblTask;
-    private static java.awt.Panel panelCode;
+    private static javax.swing.JPanel panelCode;
     private javax.swing.JPanel panelFunction;
-    private static java.awt.Panel panelKeyboard;
+    private static javax.swing.JPanel panelKeyboard;
     private java.awt.Panel panelTask;
     // End of variables declaration//GEN-END:variables
 }

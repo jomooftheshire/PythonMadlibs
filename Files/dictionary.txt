@@ -1,7 +1,0 @@
-print :: A function used to output messages to the commandline
-eval :: Used to change a value to numeric
-* :: Multiplication symbol
-/ :: Division symbol
-import :: Used to access methods from other python modules to be used in the current module
-if :: A function used to decide if code associatied with it is run, depending if the
-else :: A function that holds code that will be run if the conditions for if or elif are not met. 
