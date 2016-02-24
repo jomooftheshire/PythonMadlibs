@@ -27,7 +27,7 @@ public class Word {
     private int xCoord, yCoord;
     private WordSwitcher switcher;
     private final boolean empty;
-    private final boolean kb;
+    private boolean kb;
     private boolean icon;
     private String list; //States what word the list belongs to (keyboard or code);
     private HashMap<String, String> dictionary;
@@ -109,10 +109,7 @@ public class Word {
             }
         }
         
-        Dimension d = new Dimension(label.getPreferredSize().width + 5, label.getPreferredSize().height);       //+5 to solve the border issue
-            label.setMaximumSize(d);
-            label.setMinimumSize(d);
-            label.setSize(d);
+        setDimension();
         
         if (kb == false && isBlank() == false){
             label.setFocusable(false);
@@ -125,6 +122,13 @@ public class Word {
         if(label.isFocusable()){
                addMouse();
             }
+     }
+     
+     public void setDimension(){
+         Dimension d = new Dimension(label.getPreferredSize().width + 5, label.getPreferredSize().height);       //+5 to solve the border issue
+            label.setMaximumSize(d);
+            label.setMinimumSize(d);
+            label.setSize(d);
      }
      
      public void addMouse(){
@@ -228,6 +232,10 @@ public class Word {
       
       public void setList(String l){
           list = l;
+      }
+      
+      public void setKeyboard(boolean bool){
+          kb = true;
       }
       
       

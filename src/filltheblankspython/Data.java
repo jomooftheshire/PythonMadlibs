@@ -25,10 +25,11 @@ public class Data {
     private ArrayList<String> funcList;
     private WordSwitcher switcher;
     private HashMap dictionary;
-    static Parser parser; //testing
+    //static Parser parser; //testing
+    private int difficulty;
     
     
-    public Data(WordSwitcher ws){
+    public Data(WordSwitcher ws, int diff){
         switcher = ws;
         dictionary = new HashMap<String, String>();
         funcList = new ArrayList<>();
@@ -38,6 +39,7 @@ public class Data {
         tasks = new ArrayList<>();
         codeList = new ArrayList<>();
         keyboardList = new ArrayList<>();
+        difficulty = diff;
         setInfo(filesFound);
     }
     
@@ -101,30 +103,10 @@ public class Data {
     
     private void setInfo(ArrayList<File> filesFound){
         for (File file : filesFound){
-            Parser p = new Parser(file, switcher, dictionary);
-            parser = p; //delete this. Testing only.
+            Parser p = new Parser(file, switcher, dictionary, difficulty);
             tasks.add(p.getTask());
             codeList.add(p.getCodeList());
             keyboardList.add(p.getKeyboardList());
         }
-    }
- 
-    
-    //uaed for testing purposes
-//    public void printInfo(int l){
-//        ArrayList<Word> c = getCode(l);
-//        ArrayList<Word> k = getKeyboard(l);
-//        System.out.println("CODE:");
-//        for(Word cw : c){
-//            System.out.println(cw.getWord());
-//        }
-//        System.out.println("KEYBOARD:");
-//        for(Word kw : k){
-//            System.out.println(kw.getWord());
-//        }
-//    }  
-    
-    static Parser getParser(){
-        return parser;
     }
 }

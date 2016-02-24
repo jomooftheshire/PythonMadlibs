@@ -5,13 +5,12 @@
  */
 package filltheblankspython;
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 /**
  *
  * @author Joshua Mulcock
@@ -22,15 +21,17 @@ public class Parser {
     private String task;
     private WordSwitcher switcher;
     private HashMap<String,String> dictionary;
-    static Word temp; //delete
+    private int difficulty;
     
-    public Parser(File f, WordSwitcher ws, HashMap<String, String> dic){
+    public Parser(File f, WordSwitcher ws, HashMap<String, String> dic, int diff){
         File file = f;
         switcher = ws;
         keyboard = new ArrayList<Word>();
         code = new ArrayList<Word>();    
         dictionary = dic;
         inputData(file);
+        difficulty = diff;
+        setKeyboard();
     }
     
     
@@ -61,23 +62,62 @@ public class Parser {
         return words;
     }
     
+    /*
+    @param difficulty the difficulty represents how many keybparts need to be hidden
+    @int place is a holder for a random position
+    The setKeybaord class could be implemented to select random words to be used as the keyboard.
+    This removes the necessity of having to prechoose what words are implemented
+    and can lead to the same files to being used over and over again. Currently 
+    not implemented.
+    */
+    private void setKeyboard(){
+        int place, blanks;      //blanks is number of blanks
+        blanks = getBlanks(difficulty);
+        Random rnd = new Random();
+        Word w = new Word(switcher);
+        for(int i=0; i < blanks; i++){
+            do {
+                place = rnd.nextInt(code.size());
+                w = code.get(place);
+            } while(w.getWord().equals("@newline@") || w.isBlank() == true || w.getWord().equals("\t")); //Pevents the newline being an option or one that has already being chosen
+            Word kb =  w.clone();
+            kb.setKeyboard(true);
+            keyboard.add(kb);
+            w.setBlank(true);
+        }
+    }
+    
+    private int getBlanks(int diff){
+        Random rnd = new Random();
+        int rand = rnd.nextInt(3) + 1;
+        int missing;
+        if(diff == 0){
+            //missing = rnd.nextInt(3) + 3; //(max - min + 1) + min   3-5
+            missing = rand;
+        }
+        else if(diff == 1){
+            missing = (code.size() / 2) - rand; 
+            
+        }
+        else {
+            missing = (code.size() / 2) + rand;
+        }
+        System.out.println("M:R:S;  "+missing + ":" + rand + ":"+code.size());
+        return missing;
+    }
+    
     private void setWordList(String[] words){
         for(String word : words){
             Word w = new Word(word, false, switcher, false, dictionary);
             if(word.startsWith("!") && word.endsWith("!")){
-                w.setBlank(true);
+//                w.setBlank(true);
                 w.setWord(word.replaceAll("!", ""));
-                
-                Word kb = new Word(w.getWord(), false, switcher, true, dictionary);  //new instance of word
-                //System.out.println(w.getWord() + ":" + w);
-                //kb.become(w);
-                //kb.setBlank(false);
-                //kb.setKB(true);     //used to state the word is keybaord.
-                keyboard.add(kb);
+//                
+//                Word kb = new Word(w.getWord(), false, switcher, true, dictionary);  //new instance of word
+//                keyboard.add(kb);
             }
             code.add(w);
         }
-        setTempWord(keyboard.get(0));
     }
     
     public ArrayList<Word> getKeyboardList(){
@@ -90,13 +130,5 @@ public class Parser {
     
     public String getTask(){
         return task;
-    }
-    
-    public void setTempWord(Word w){
-        temp = w;
-    }
-    
-    static Word getTempWord(){
-        return temp;
     }
 }

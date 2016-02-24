@@ -25,30 +25,46 @@ import javax.swing.*;
  * @author Joshua Mulcock
  */
 public class Main extends javax.swing.JDialog {
-private static Data data; //edit this static
+private Data data; //edit this static
 private ArrayList<Word> code;
 private static ArrayList<Word> screenCode;
 private ArrayList<Word> keyboard;
 private static WordSwitcher switcher;
 private int taskNum, taskSize;
 private static ArrayList<Word> screenKB;
-static int spaceX, spaceY; 
+private static int spaceX, spaceY; 
+private static int difficulty;
+private static int rndKB;
    
 /**
      * Creates new form Main
      */
-    public Main(java.awt.Frame parent, boolean modal) { 
+    public Main(java.awt.Frame parent, boolean modal, int diff) { 
         super(parent, modal);
         initComponents();
-        //parent.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-        switcher = new WordSwitcher();
-        data = new Data(switcher);
         spaceX = lblSpace.getWidth();    //spacing to be used to place next Jlabel once the JLbael is the size of the text in code.
         spaceY = lblSpace.getHeight() + 10;
+        switcher = new WordSwitcher();
+        data = new Data(switcher, diff);
         taskSize = data.getTasksSize();
         taskNum = 0;
-        newTask(taskNum);
-        
+        levelBuilder(diff);
+        difficulty = diff;
+        focusKB();
+    }
+    
+    private void levelBuilder(int diff){
+    //This will be used to construct the game deoending on the level.
+        if (diff == 0){
+            rndKB = 0;
+        }
+        else if (diff == 1){
+            rndKB = 10;
+        }
+        else {
+            rndKB = 15;
+        }
+        newTask(taskNum, diff);
     }
 
     private void setLblNum(int taskNum, int taskSize){ //not working
@@ -75,6 +91,7 @@ static int spaceX, spaceY;
         btnCheck = new javax.swing.JButton();
         lblNum = new javax.swing.JLabel();
         lblSpace = new javax.swing.JLabel();
+        lblMoves = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1200, 620));
@@ -109,7 +126,7 @@ static int spaceX, spaceY;
         panelCode.setLayout(panelCodeLayout);
         panelCodeLayout.setHorizontalGroup(
             panelCodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1036, Short.MAX_VALUE)
+            .addGap(0, 1028, Short.MAX_VALUE)
         );
         panelCodeLayout.setVerticalGroup(
             panelCodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -152,29 +169,41 @@ static int spaceX, spaceY;
         lblSpace.setFont(new java.awt.Font("Monospaced", 0, 30)); // NOI18N
         lblSpace.setText(" ");
 
+        lblMoves.setFont(new java.awt.Font("Times New Roman", 0, 24)); // NOI18N
+        lblMoves.setText("Switches: ");
+
         javax.swing.GroupLayout panelFunctionLayout = new javax.swing.GroupLayout(panelFunction);
         panelFunction.setLayout(panelFunctionLayout);
         panelFunctionLayout.setHorizontalGroup(
             panelFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelFunctionLayout.createSequentialGroup()
+            .addGroup(panelFunctionLayout.createSequentialGroup()
                 .addComponent(btnCheck)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnRemove))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelFunctionLayout.createSequentialGroup()
-                .addContainerGap(194, Short.MAX_VALUE)
-                .addComponent(lblNum)
-                .addGap(105, 105, 105)
-                .addComponent(lblSpace)
-                .addGap(70, 70, 70))
+                .addGap(98, 98, 98)
+                .addGroup(panelFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelFunctionLayout.createSequentialGroup()
+                        .addComponent(lblNum)
+                        .addGap(111, 111, 111)
+                        .addComponent(lblSpace)
+                        .addGap(85, 85, 85))
+                    .addGroup(panelFunctionLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnRemove))))
+            .addGroup(panelFunctionLayout.createSequentialGroup()
+                .addGap(75, 75, 75)
+                .addComponent(lblMoves, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelFunctionLayout.setVerticalGroup(
             panelFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelFunctionLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblSpace)
+                .addGroup(panelFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelFunctionLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(lblSpace))
                     .addComponent(lblNum))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
+                .addGap(19, 19, 19)
+                .addComponent(lblMoves)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
                 .addGroup(panelFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnRemove, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnCheck, javax.swing.GroupLayout.Alignment.TRAILING)))
@@ -257,7 +286,7 @@ static int spaceX, spaceY;
                     removeComponents(panelCode);
                     removeComponents(panelKeyboard);
                     taskNum +=1;
-                    newTask(taskNum);     //goes to next task
+                    newTask(taskNum, difficulty);     //goes to next task
         }
         
         else {
@@ -278,7 +307,7 @@ static int spaceX, spaceY;
                 System.out.println("Sleep failed");
             }
         
-            newCode(screenCode);                //redraws the cod
+            newCode(screenCode);                //redraws the code
         
         }
     }//GEN-LAST:event_btnCheckActionPerformed
@@ -287,7 +316,7 @@ static int spaceX, spaceY;
     private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveActionPerformed
         removeComponents(panelCode);
         removeComponents(panelKeyboard);
-        newTask(taskNum);
+        newTask(taskNum, difficulty);
     }//GEN-LAST:event_btnRemoveActionPerformed
 
     private static void removeComponents(JPanel p){
@@ -329,7 +358,7 @@ static int spaceX, spaceY;
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                Main dialog = new Main(new javax.swing.JFrame(), true);
+                Main dialog = new Main(new javax.swing.JFrame(), true, difficulty);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -341,15 +370,13 @@ static int spaceX, spaceY;
         });
     }
     
-    private void newTask(int level) {
-        //code = new ArrayList<>();
-        //keyboard = new ArrayList<>();
+    private void newTask(int level, int diff) {
         setLblNum(taskNum, taskSize);
         keyboard = data.getKeyboard(level); //shallow copy
         screenKB = new ArrayList<Word>(keyboard);
-        int n = 10 - keyboard.size();
+        switcher.setMaxMoves(diff , keyboard.size()); //this gets the blank
+        int n = rndKB - keyboard.size();
         screenKB.addAll(getRandomKeyboard(n));
-        
         code = data.getCode(level);
         screenCode = new ArrayList<Word>(code); //contains the information that will change.
         
@@ -366,27 +393,64 @@ static int spaceX, spaceY;
     
     private static void lblFlash(ArrayList<Word> list){
         //makes a set of Jlabels flash to direct the player to where they should click.
-        for(int i=0; i < 5; i++){
+        for(int i=0; i < 3; i++){
             for(Word w : list){
                 w.getLabel().setBackground(Color.yellow);
+                w.getLabel().setBorder(BorderFactory.createEtchedBorder(Color.lightGray, Color.yellow));
+                w.getLabel().setIcon(new javax.swing.ImageIcon(("/Images/tempFocus.png")));
+                //w.setDimension();
+                w.getLabel().repaint();
+                w.getLabel().revalidate();
             }
             try {
-                TimeUnit.MILLISECONDS.sleep(350);
+                System.out.println("Flash");
+                TimeUnit.MILLISECONDS.sleep(400);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Wait crash");
             }
             for(Word w : list){
                 w.getLabel().setBackground(null);
+                if(w.isBlank() || w.isKeyboard()){
+                    w.standardBorder();
+                }
+                else {
+                    w.getLabel().setBorder(null);
+                }
+                //w.setDimension();
+                w.getLabel().repaint();
+                w.getLabel().revalidate();
             }
         }
     }
     
-    public static void focusKB(){
-        lblFlash(screenKB);
+    public static void panelFlash(JPanel panel) throws InterruptedException{
+        Color colour = panel.getBackground();
+        for(int i=0; i < 4; i++){
+            panel.setBackground(Color.yellow);
+            TimeUnit.MILLISECONDS.sleep(400);
+            panel.setBackground(colour);
+            TimeUnit.MILLISECONDS.sleep(400);
+        }
+    }
+    
+    public static void focusKB() {
+    try {
+        //lblFlash(screenKB);
+        panelFlash(panelKeyboard);
+    } catch (InterruptedException ex) {
+        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        
+    }
     }
     
     public static void focusCode(){
-        lblFlash(screenCode);
+    try {
+        //lblFlash(screenCode);
+        panelFlash(panelCode);
+    } catch (InterruptedException ex) {
+        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+    }
     }
     
     
@@ -405,7 +469,7 @@ static int spaceX, spaceY;
         int yCoord = 0;
         int num = 0;
         for(Word word : c) {
-            
+            System.out.println(word.getWord());
             if (word.getWord().equals("@newline@")){
                 yCoord+=spaceY;
                 xCoord = 20;
@@ -420,6 +484,7 @@ static int spaceX, spaceY;
                 word.newLabel(xCoord, yCoord, name);
                 word.setLabelName(name);
                 panelCode.add(word.getLabel());
+                //System.out.println("CD;     " + word.getWord() + ";      " + word.getLabelName()+ ";      " + word.getLabel().getLocation()+ ";      " +word.getLabel().isVisible());
                 xCoord += word.getLabel().getWidth() + spaceX; // this makes sure there is a space inbetween 
             }
         }
@@ -430,18 +495,21 @@ private static void newKeyboard(ArrayList<Word> k){
         int xCoord = 20;
         int yCoord = 0;
         int num=0;
-        int gap = (panelKeyboard.getWidth() - 60) / k.size();
-        System.out.println("K:"+k.size());
-        //checker(k); //delete this
+        int gapX = (panelKeyboard.getWidth() - 60) / 5;
+        int gapY = panelKeyboard.getHeight() / 3;
         for (Word word : k){
             word.setList("kb"); //this is telling that the word belongs to KB.
-            //System.out.println(word.getWord() + ":" + word);
             String name = "key"+num;
             word.newLabel(xCoord, yCoord, name);
             word.setLabelName(name);
             panelKeyboard.add(word.getLabel());
-            xCoord+=gap; //equal width apart for number of objects but including random notatin 
+            //System.out.println("KB;     " + word.getWord() + ";      " + word.getLabelName()+ ";      " + word.getLabel().getLocation()+ ";      " +word.getLabel().isVisible());
+            xCoord+=gapX; //equal width apart for number of objects but including random notatin 
             num++;
+            if ((num % 5) == 0){
+                yCoord += gapY;
+                xCoord = 20;
+            }
         }
         
     }
@@ -453,34 +521,24 @@ private static void newKeyboard(ArrayList<Word> k){
         int size = funcList.size();
         String s;
         for (int i = 0; i < n; i++){
-            s = funcList.get(rnd.nextInt(size));
-            System.out.println(s);
+            do {
+                s = funcList.get(rnd.nextInt(size));
+            } while(s.equals("@newline@"));
+            
             Word w = new Word(s, false, switcher, true, data.getDictionary());
             list.add(w);
         }
         return list;
+    }   
+    
+    public static void setMovesLeft (int moves){
+        lblMoves.setText("Switches:" + moves);
     }
-
-        static void checker(ArrayList<Word> k){
-            if(k.get(0) == data.getParser().getTempWord()){
-                System.out.println("Same location");
-            }
-            else{
-                System.out.println("Different Location");
-            }
-            
-            if(k.get(0).equals(data.getParser().getTempWord())){
-                System.out.println("Same object");
-            }
-            else {
-                System.out.println("Different Object");
-            }
-            
-        }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCheck;
     private javax.swing.JButton btnRemove;
+    private static javax.swing.JLabel lblMoves;
     private javax.swing.JLabel lblNum;
     private javax.swing.JLabel lblSpace;
     private javax.swing.JLabel lblTask;

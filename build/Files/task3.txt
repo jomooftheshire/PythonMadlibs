@@ -1,0 +1,5 @@
+Task:This code uses functions taken from the math module in python. It is necessary that the program knows that it needs to get the functions from the module. The purpose of this module is to find the area of a circle using a user defined input.
+import !math!
+radius = !eval! ( input ( " Radius of circle?: " ) )
+area !=! math.pi * radius !**! 2
+print ( " Area is: " !,! area )

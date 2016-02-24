@@ -19,7 +19,7 @@ public class WordSwitcher {
     private boolean lock; //puts a lock on to stop word1 pointing constantly being used.
     private int selectCounter;
     private boolean w1exists, w2exists;
- 
+    private int moves, maxMoves; //moves is number of switches and maxMoves is possible switches.
     
     public WordSwitcher(){ 
         lock = false;
@@ -28,20 +28,55 @@ public class WordSwitcher {
         word2 = new Word(this);
         w1exists = false;
         w2exists = false;
+        //setMaxMoves(diff, blanks);
+    }
+    
+    public void setMaxMoves(int diff, int blanks){
+        int moves;
+        if(diff == 0){
+            moves = blanks * 2;
+        }
+        else if(diff == 1){
+            moves = blanks + (blanks/2);
+        }
+        else{
+            moves = blanks + 1;
+        }
+        maxMoves = moves;
+        Main.setMovesLeft(moves);
+        
+    }
+    
+    public void resetMoves(){
+        moves = 0;
+    }
+    
+    public int getMoves(){
+        return moves;
+    }
+    
+    
+    public boolean isMaxMoves(){
+        if(moves == maxMoves){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
     
     public void setWord1(Word word){
         word1 = word;
         w1exists = true;
         lock = true;
-        System.out.println("Word 1 set: " + word.getWord());
+        //System.out.println("Word 1 set: " + word.getWord());
     }
     
     public void setWord2(Word word){
         word2 = word;
         w2exists = true;
         lock = false;
-        System.out.println("Word 2 set: " + word.getWord());
+        //System.out.println("Word 2 set: " + word.getWord());
     }
     
     public boolean isWord2(){
@@ -111,60 +146,37 @@ public class WordSwitcher {
         //test();
         
 //this is not flipping it in the arrayLists    
-        if (fIsKB == true && sIsKB == false){
-            kb.set(pos1, word2);
-            code.set(pos2, word1);
-        }
-        else if (fIsKB == false && sIsKB == true){
-            kb.set(pos2, word1);
-            code.set(pos1, word2);
-        }
-        else if (fIsKB == true && sIsKB == true){
-            kb.set(pos1, word2);
-            kb.set(pos2, word1);
-        }
-        else {
-            code.set(pos1, word2);
-            code.set(pos2, word1);
-        }     
+//        if (fIsKB == true && sIsKB == false){
+//            kb.set(pos1, word2);
+//            code.set(pos2, word1);
+//        }
+//        else if (fIsKB == false && sIsKB == true){
+//            kb.set(pos2, word1);
+//            code.set(pos1, word2);
+//        }
+//        else if (fIsKB == true && sIsKB == true){
+//            kb.set(pos1, word2);
+//            kb.set(pos2, word1);
+//        }
+//        else {
+//            code.set(pos1, word2);
+//            code.set(pos2, word1);
+//        }     
 //       
-        
-        
+        increaseMoves();
         Main.refresh(code, kb);
     }
     
-    
-//    void test(){
-//        ArrayList<Word> tempC = new ArrayList<>(code);
-//        ArrayList<Word> tempKB = new ArrayList<>(kb);
-//        
-//        System.out.println("Code:\t Old||New");
-//        for(int i=0;i<code.size();i++){
-//           Word wN = code.get(i);
-//           Word wO = tempC.get(i);
-//            System.out.println(wO.getLabelName()+":"+wO.getWord()+"\t||\t"+wN.getLabelName()+":"+wN.getWord());
-//                }
-//        System.out.println();
-//         System.out.println("KB:\t Old||New");
-//        for(int i=0;i<kb.size();i++){
-//           Word wN = kb.get(i);
-//           Word wO = tempKB.get(i);
-//            System.out.println(wO.getLabelName()+":"+wO.getWord()+"\t||\t"+wN.getLabelName()+":"+wN.getWord());
-//                }
-//        System.out.println("--------------------------------------------------------------");
-//    }
-//    
-//    void print(){
-//        System.out.println("code:");
-//        for(Word w : code){
-//            System.out.println(w.getLabel().getText());
-//        }
-//        System.out.println("Keyboard:");
-//        for(Word kb : kb){
-//            System.out.println(kb.getLabel().getText());
-//        }
-//        System.out.println("--------------------------------------------------");
-//    }
+    private void increaseMoves(){
+        moves++;
+        if(moves == maxMoves){
+            JOptionPane.showMessageDialog(null, "Out of Moves!");
+            //need to code a close or something
+        }
+        else{
+            Main.setMovesLeft(maxMoves - moves);
+        }
+    }
     
     private int getPosition(Word word, ArrayList<Word> list){
        int position = 0;

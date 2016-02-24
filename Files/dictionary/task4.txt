@@ -1,0 +1,31 @@
+Task: This code sorts out an amount of money into the highest uk coin denominations possible
+amount = eval( input( "Amount of pence? "))
+    twohundamount = amount // 200
+    amount = amount % 200
+
+    onehundamount = amount // 100
+    amount = amount % 100
+
+    fiftyamount = amount // 50
+    amount = amount % 50
+
+    twentyamount = amount // 20
+    amount = amount % 20
+
+    tenamount = amount // 10
+    amount = amount % 10
+
+    fiveamount = amount // 5
+    amount = amount % 5
+
+    twoamount = amount // 2
+    amount = amount % 2
+
+    print( "Amount of £2: ", twohundamount)
+    print( "Amount of £1: ", onehundamount)
+    print( "Amount of 50p: ", fiftyamount)
+    print( "Amount of 20p: ", twentyamount)
+    print( "Amount of 10p: ", tenamount)
+    print( "Amount of 5p: ", fiveamount)
+    print( "Amount of 2p: ", twoamount)
+    print( "Amount of 1p: ", amount)
