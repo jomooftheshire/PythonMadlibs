@@ -5,6 +5,7 @@
  */
 package filltheblankspython;
 import java.awt.Point;
+import java.awt.Window;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 /**
@@ -21,6 +22,9 @@ public class WordSwitcher {
     private boolean w1exists, w2exists;
     private int moves, maxMoves; //moves is number of switches and maxMoves is possible switches.
     
+    /**
+     * Constructor for the WordSwitcher class
+     */
     public WordSwitcher(){ 
         lock = false;
         selectCounter = 0;
@@ -30,25 +34,36 @@ public class WordSwitcher {
         w2exists = false;
         //setMaxMoves(diff, blanks);
     }
-    
+    /**
+     * This method sets the maximum amount of word switches the user can make to
+     * complete this exercise. It invokes the method setMovesLeft in the Main class
+     * to give users visual feedback about how many moves they have at the beginning
+     * of the round.
+     * @param diff the difficulty of the game
+     * @param blanks the amount of blanked out words in the code
+     */
     public void setMaxMoves(int diff, int blanks){
-        int moves;
+        resetMoves();
+        int m;
         if(diff == 0){
-            moves = blanks * 2;
+            m = blanks * 2;
         }
         else if(diff == 1){
-            moves = blanks + (blanks/2);
+            m = blanks + (blanks/2);
         }
         else{
-            moves = blanks + 1;
+            m = blanks + 1;
         }
-        maxMoves = moves;
-        Main.setMovesLeft(moves);
+        maxMoves = m;
+        Main.setMovesLeft(m);
         
     }
     
+    /**
+     * Resets the moves back to the original moves
+    */
     public void resetMoves(){
-        moves = 0;
+        moves = 0; //was equal to maxMoves here for some reason
     }
     
     public int getMoves(){
@@ -56,6 +71,9 @@ public class WordSwitcher {
     }
     
     
+    /**
+     * Simple test to see if all the switches have been used by the player
+    */
     public boolean isMaxMoves(){
         if(moves == maxMoves){
             return true;
@@ -65,13 +83,20 @@ public class WordSwitcher {
         }
     }
     
+    /**
+     * Sets the word1 to equal the word passed in.
+     * @param word  
+     */
     public void setWord1(Word word){
         word1 = word;
         w1exists = true;
         lock = true;
-        //System.out.println("Word 1 set: " + word.getWord());
     }
     
+    /**
+     * Sets the word1 to equal the word passed in.
+     * @param word  
+     */
     public void setWord2(Word word){
         word2 = word;
         w2exists = true;
@@ -79,6 +104,10 @@ public class WordSwitcher {
         //System.out.println("Word 2 set: " + word.getWord());
     }
     
+    /**
+     * A method to decide which word the selected word on the GUI is.
+     * @return if Word2 is blank or not. 
+     */
     public boolean isWord2(){
         //if lock is true, it means that Word2 if free, if false Word1 is free
         //prevents words being overriden.
@@ -105,87 +134,117 @@ public class WordSwitcher {
         return lock;
     }
     
-    public void changePlaces(){
+    public void oldChangePlaces(){
         int pos1,pos2;
         Word tempWord;
         boolean fIsKB, sIsKB;   //f = first, s = second
-        Point one, two;       
-//        
-        if(word1.getLabelName().contains("key")){
-            pos1 = getPosition(word1, kb);
-            fIsKB = true;
-        }
         
+        if(word2.getWord().equals("@panelKeyboard@")){
+           if(word1.getLabelName().contains("code")){
+                pos1 = getPosition(word1, code);
+                fIsKB = false;
+               kb.add(word1);
+               code.remove(word1); //lost a different word in the LIST!
+           }
+          
+        }   
         else {
-            pos1 = getPosition(word1, code);
-            fIsKB = false;
-        }
+            if(word1.getLabelName().contains("key")){
+                
+                pos1 = getPosition(word1, kb);
+               
+                fIsKB = true;
+            }
         
-        if(word2.getLabelName().contains("key")){
-            pos2 = getPosition(word2, kb);
-            sIsKB = true;
-        }
-        else {
-            pos2 = getPosition(word2, code);
-            sIsKB = false;
-        }
+            else {
+                pos1 = getPosition(word1, code);
+                fIsKB = false;
+            }
         
         
-        tempWord = new Word(this);
-        tempWord = word1.clone();
-        word1 = word2.clone();
-        word2 = tempWord.clone();
+            if(word2.getLabelName().contains("key")){
+                pos2 = getPosition(word2, kb);
+                sIsKB = true;
+            }
+            else {
+                pos2 = getPosition(word2, code);
+                sIsKB = false;
+            }
         
-        //test();
-        
-        two = word2.getLabel().getLocation();
-        one = word1.getLabel().getLocation();
-        word1.setLabelPoint(two);
-        word2.setLabelPoint(one);
-        
-        //test();
-        
-//this is not flipping it in the arrayLists    
-//        if (fIsKB == true && sIsKB == false){
-//            kb.set(pos1, word2);
-//            code.set(pos2, word1);
-//        }
-//        else if (fIsKB == false && sIsKB == true){
-//            kb.set(pos2, word1);
-//            code.set(pos1, word2);
-//        }
-//        else if (fIsKB == true && sIsKB == true){
-//            kb.set(pos1, word2);
-//            kb.set(pos2, word1);
-//        }
-//        else {
-//            code.set(pos1, word2);
-//            code.set(pos2, word1);
-//        }     
-//       
+    
+            if (fIsKB == true && sIsKB == false){
+                if(word2.isBlank()){            //this is used to prevent pieces getting delete by accidenmtl
+                    kb.remove(pos1);
+                }
+                else{
+                    kb.set(pos1, word2);
+                }
+                code.set(pos2, word1);
+            }
+            
+            else if (fIsKB == false && sIsKB == true){
+                if(word1.isBlank()){
+                    kb.remove(pos2);
+                }
+                else{
+                    kb.set(pos2, word1);
+                }
+                code.set(pos1, word2);
+            }
+            
+            else if (fIsKB == true && sIsKB == true){
+                kb.set(pos1, word2);
+                kb.set(pos2, word1);
+            }
+            
+            else {
+                code.set(pos1, word2);
+                code.set(pos2, word1);
+            }     
+       
+        }    
         increaseMoves();
+        Main.msgSwitch();
         Main.refresh(code, kb);
+    
     }
     
+    /**
+     * This method is used to increase the variable that holds how many moves the
+     * user has made. If the maximum moves have been reached it closes all windows
+     * and restarts the program.
+     */
     private void increaseMoves(){
         moves++;
+        Main.setMovesLeft(maxMoves - moves);
         if(moves == maxMoves){
             JOptionPane.showMessageDialog(null, "Out of Moves!");
+            for(Window w : Window.getWindows()){
+                w.dispose();
+            }
+            OpeningScreen.main(null);
             //need to code a close or something
-        }
-        else{
-            Main.setMovesLeft(maxMoves - moves);
         }
     }
     
+    /**
+     * A method used for finding which position in the ArrayList a word is.
+     * @param word which object in the list that needs to be found
+     * @param list which ArrayList the word is in
+     * @return the words position in the list. 
+     */
     private int getPosition(Word word, ArrayList<Word> list){
        int position = 0;
        boolean finished = false;
        while (finished == false && position < list.size()){
+           finished = false;
            String nameArr = list.get(position).getLabelName();
            if(nameArr != null){                 //newline has no label so this prevents index out of bounds.
-                if (word.getLabelName().equals(nameArr)){
+                if (nameArr.equals(word.getLabelName())){
                     finished = true;     //used to stop IndexOutOfBoundsException
+                }
+                else {
+                    position++;
                 }
             }    
             else {
@@ -195,9 +254,14 @@ public class WordSwitcher {
        return position;
     }
     
+    /**
+     * This method works out when a switch between or within ArrayLists need to be
+     * done. If so it launches the method for changing the places and then resets
+     * the class back to defaults.
+     */
     public void needSwitch(){
         if (w1exists == true && w2exists == true){
-            changePlaces();
+            oldChangePlaces();
             word1.standardBorder();
             word2.standardBorder();
             word1 = new Word(this);  //empty word except switcher reference and boolean to say its empty
@@ -205,6 +269,16 @@ public class WordSwitcher {
             w1exists = false;
             w2exists = false;
         }
+    }
+    
+    /**
+     * Gives the user more moves. Used for when answers are wrong and the user 
+     * needs m ore moves to get it right.
+     * @param num how many moves to increase by 
+     */
+    public void addMoves(int num){
+        moves += num;
+        Main.setMovesLeft(moves);
     }
 }
     

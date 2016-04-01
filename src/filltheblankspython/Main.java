@@ -6,12 +6,10 @@
 package filltheblankspython;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Panel;
-import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -34,25 +32,73 @@ private int taskNum, taskSize;
 private static ArrayList<Word> screenKB;
 private static int spaceX, spaceY; 
 private static int difficulty;
-private static int rndKB;
-   
+private static int rndKB;   
+private int blanks;
+private static boolean windows; //this is stating if a windows machine or not.
+private static boolean pythree;
+private static String pyLocation;
 /**
      * Creates new form Main
      */
-    public Main(java.awt.Frame parent, boolean modal, int diff) { 
+
+    public Main(){}
+    
+    public Main(java.awt.Frame parent, boolean modal, int diff, boolean wnd, boolean pythonThree, String pyLoc) { 
         super(parent, modal);
         initComponents();
+        pythree = pythonThree;
+        System.out.println(pythree);
+        if (pythree == false){
+            btnPython.setVisible(false);
+        }
+        windows = wnd;
+        pyLocation = pyLoc;
         spaceX = lblSpace.getWidth();    //spacing to be used to place next Jlabel once the JLbael is the size of the text in code.
         spaceY = lblSpace.getHeight() + 10;
         switcher = new WordSwitcher();
         data = new Data(switcher, diff);
+        panelKeyboard.addMouseListener(new MouseAdapter() {    
+               @Override
+               public void mousePressed(MouseEvent e) {
+                    if(switcher.isWord2()){
+                        switcher.setWord2(new Word("@panelKeyboard@", false, switcher, true, null));
+                        //omly allowing for the keyboard to be selected second
+                    }
+               }
+//                public void mouseEntered(MouseEvent e){
+//                    panelKeyboard.setCursor(new Cursor(Cursor.HAND_CURSOR));
+//               }
+               });
+        
+        
         taskSize = data.getTasksSize();
         taskNum = 0;
         levelBuilder(diff);
         difficulty = diff;
-        focusKB();
+        msgChoose();
+        JOptionPane.showMessageDialog(null, "Stuck? Look at the message box in the bottom lef"
+                + "t corner!");
+        
     }
     
+    public static void msgChoose(){
+        msgBoard.append("\n");
+        msgBoard.append("Click a block");
+        msgBoard.append("\n");
+    }
+    
+    public static void msgSelected(){
+        msgBoard.append("\n");
+        msgBoard.append("Block Selected");
+        msgBoard.append("\n");
+    }
+    
+    public static void msgSwitch(){
+        msgBoard.append("\n");
+        msgBoard.append("Blocks Switched");
+        msgBoard.append("\n");
+    }
+        
     private void levelBuilder(int diff){
     //This will be used to construct the game deoending on the level.
         if (diff == 0){
@@ -70,7 +116,7 @@ private static int rndKB;
     private void setLblNum(int taskNum, int taskSize){ //not working
         int size = taskSize;
         int num = taskNum + 1;
-        lblNum.setText(num +"/"+ size);
+        lblNum.setText("Level: "+num +"/"+ size);
     }
     
     /**
@@ -92,18 +138,28 @@ private static int rndKB;
         lblNum = new javax.swing.JLabel();
         lblSpace = new javax.swing.JLabel();
         lblMoves = new javax.swing.JLabel();
+        msgScroll = new javax.swing.JScrollPane();
+        msgBoard = new javax.swing.JTextArea();
+        btnPython = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1200, 620));
+        setTitle("Fill The Blanks ~ Python Edition");
+        setMaximumSize(new java.awt.Dimension(1366, 775));
+        setMinimumSize(new java.awt.Dimension(1366, 775));
+        setPreferredSize(new java.awt.Dimension(1366, 775));
 
         panelTask.setBackground(new java.awt.Color(204, 204, 255));
-        panelTask.setMaximumSize(new java.awt.Dimension(420, 600));
-        panelTask.setMinimumSize(new java.awt.Dimension(420, 600));
-        panelTask.setPreferredSize(new java.awt.Dimension(420, 600));
+        panelTask.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        panelTask.setMaximumSize(new java.awt.Dimension(460, 400));
+        panelTask.setMinimumSize(new java.awt.Dimension(460, 400));
+        panelTask.setPreferredSize(new java.awt.Dimension(460, 400));
 
-        lblTask.setFont(new java.awt.Font("Times New Roman", 2, 24)); // NOI18N
+        lblTask.setFont(new java.awt.Font("Tw Cen MT", 2, 24)); // NOI18N
         lblTask.setText("Task:");
         lblTask.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        lblTask.setMaximumSize(new java.awt.Dimension(50, 30));
+        lblTask.setMinimumSize(new java.awt.Dimension(50, 30));
+        lblTask.setPreferredSize(new java.awt.Dimension(50, 30));
         lblTask.setSize(panelTask.getWidth(), panelTask.getHeight());
         lblTask.setMaximumSize(lblTask.getSize());
 
@@ -111,7 +167,7 @@ private static int rndKB;
         panelTask.setLayout(panelTaskLayout);
         panelTaskLayout.setHorizontalGroup(
             panelTaskLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblTask, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(lblTask, javax.swing.GroupLayout.PREFERRED_SIZE, 369, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         panelTaskLayout.setVerticalGroup(
             panelTaskLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -120,26 +176,33 @@ private static int rndKB;
                 .addGap(189, 189, 189))
         );
 
-        panelCode.setBackground(new java.awt.Color(204, 204, 255));
+        panelCode.setBackground(new java.awt.Color(51, 200, 238));
+        panelCode.setAutoscrolls(true);
+        panelCode.setMaximumSize(new java.awt.Dimension(906, 401));
+        panelCode.setMinimumSize(new java.awt.Dimension(906, 401));
 
         javax.swing.GroupLayout panelCodeLayout = new javax.swing.GroupLayout(panelCode);
         panelCode.setLayout(panelCodeLayout);
         panelCodeLayout.setHorizontalGroup(
             panelCodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1028, Short.MAX_VALUE)
+            .addGap(0, 906, Short.MAX_VALUE)
         );
         panelCodeLayout.setVerticalGroup(
             panelCodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 401, Short.MAX_VALUE)
         );
 
         panelKeyboard.setBackground(new java.awt.Color(204, 204, 255));
+        panelKeyboard.setAutoscrolls(true);
+        panelKeyboard.setMaximumSize(new java.awt.Dimension(906, 330));
+        panelKeyboard.setMinimumSize(new java.awt.Dimension(906, 330));
+        panelKeyboard.setPreferredSize(new java.awt.Dimension(906, 0));
 
         javax.swing.GroupLayout panelKeyboardLayout = new javax.swing.GroupLayout(panelKeyboard);
         panelKeyboard.setLayout(panelKeyboardLayout);
         panelKeyboardLayout.setHorizontalGroup(
             panelKeyboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 906, Short.MAX_VALUE)
         );
         panelKeyboardLayout.setVerticalGroup(
             panelKeyboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -147,8 +210,12 @@ private static int rndKB;
         );
 
         panelFunction.setBackground(new java.awt.Color(204, 204, 255));
+        panelFunction.setMaximumSize(new java.awt.Dimension(460, 330));
+        panelFunction.setMinimumSize(new java.awt.Dimension(460, 330));
+        panelFunction.setName(""); // NOI18N
+        panelFunction.setPreferredSize(new java.awt.Dimension(460, 330));
 
-        btnRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/alphaCross.png"))); // NOI18N
+        btnRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/refresh.png"))); // NOI18N
         btnRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRemoveActionPerformed(evt);
@@ -163,50 +230,73 @@ private static int rndKB;
             }
         });
 
-        lblNum.setFont(new java.awt.Font("Tahoma", 0, 30)); // NOI18N
+        lblNum.setFont(new java.awt.Font("Tw Cen MT", 0, 30)); // NOI18N
         lblNum.setText("? / ?");
 
         lblSpace.setFont(new java.awt.Font("Monospaced", 0, 30)); // NOI18N
         lblSpace.setText(" ");
 
-        lblMoves.setFont(new java.awt.Font("Times New Roman", 0, 24)); // NOI18N
-        lblMoves.setText("Switches: ");
+        lblMoves.setFont(new java.awt.Font("Tw Cen MT", 0, 24)); // NOI18N
+        lblMoves.setText("Moves");
+
+        msgBoard.setColumns(20);
+        msgBoard.setFont(new java.awt.Font("Tw Cen MT", 1, 25)); // NOI18N
+        msgBoard.setRows(5);
+        msgScroll.setViewportView(msgBoard);
+
+        btnPython.setIcon(new javax.swing.ImageIcon(getClass().getResource("/filltheblankspython/Images/pylogoSmall.png"))); // NOI18N
+        btnPython.setToolTipText("Run Program in Python");
+        btnPython.setMaximumSize(new java.awt.Dimension(83, 59));
+        btnPython.setMinimumSize(new java.awt.Dimension(83, 59));
+        btnPython.setPreferredSize(new java.awt.Dimension(83, 59));
+        btnPython.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPythonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelFunctionLayout = new javax.swing.GroupLayout(panelFunction);
         panelFunction.setLayout(panelFunctionLayout);
         panelFunctionLayout.setHorizontalGroup(
             panelFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelFunctionLayout.createSequentialGroup()
-                .addComponent(btnCheck)
-                .addGap(98, 98, 98)
                 .addGroup(panelFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelFunctionLayout.createSequentialGroup()
-                        .addComponent(lblNum)
-                        .addGap(111, 111, 111)
-                        .addComponent(lblSpace)
-                        .addGap(85, 85, 85))
+                        .addComponent(btnCheck)
+                        .addGap(60, 60, 60)
+                        .addComponent(btnPython, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(57, 57, 57)
+                        .addComponent(btnRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panelFunctionLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnRemove))))
-            .addGroup(panelFunctionLayout.createSequentialGroup()
-                .addGap(75, 75, 75)
-                .addComponent(lblMoves, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap()
+                        .addGroup(panelFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panelFunctionLayout.createSequentialGroup()
+                                .addComponent(lblNum)
+                                .addGap(264, 264, 264)
+                                .addComponent(lblSpace))
+                            .addComponent(lblMoves, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(msgScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 366, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelFunctionLayout.setVerticalGroup(
             panelFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelFunctionLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelFunctionLayout.createSequentialGroup()
                 .addGroup(panelFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelFunctionLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(lblSpace))
                     .addComponent(lblNum))
-                .addGap(19, 19, 19)
+                .addGap(18, 18, 18)
                 .addComponent(lblMoves)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addGap(11, 11, 11)
+                .addComponent(msgScroll)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnRemove, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnCheck, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelFunctionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnCheck)
+                        .addComponent(btnPython, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnRemove, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(9, 9, 9))
         );
 
         btnRemove.setToolTipText("Refresh Screen");
@@ -218,8 +308,8 @@ private static int rndKB;
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelTask, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelFunction, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(panelFunction, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panelTask, javax.swing.GroupLayout.PREFERRED_SIZE, 369, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelCode, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -228,23 +318,21 @@ private static int rndKB;
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(panelTask, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(panelCode, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelTask, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panelCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelKeyboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelFunction, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(panelKeyboard, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
+                    .addComponent(panelFunction, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckActionPerformed
-//        final ArrayList<Word> code = data.getCode(taskNum);
         boolean finished = true;
         boolean correct = true;
-        //ArrayList<JLabel> list = new ArrayList<>();
         Word word1;
         Word word2;
         for(Word word : screenCode){
@@ -267,12 +355,14 @@ private static int rndKB;
                     correct = false;
                     word1.getLabel().setIcon(new javax.swing.ImageIcon(getClass().getResource("Images/alphaWrong.png")));
                     word1.setIcon(true);
+                    word1.setDimension();
                 }
                 
                 else if ((word1.getWord().equals(word2.getWord())) && word1.isBlank() == false){
-                    if(word1.getLabel().isFocusable()){             //issue with this
+                    if(word1.getLabel().isFocusable()){             
                         word1.getLabel().setIcon(new javax.swing.ImageIcon(getClass().getResource("Images/alphaRight.png")));
                         word1.setIcon(true);
+                        word1.setDimension();
                     }
                 }
                 
@@ -282,16 +372,38 @@ private static int rndKB;
         
         if (correct == true){
                     System.out.println("Correct");
-                    JOptionPane.showMessageDialog(null, "Correct");
+                    if(pythree){
+                        int result = JOptionPane.showConfirmDialog(null, "<html><p><b>Correct</b></p> "
+                                + "<p></p> <p>Run Code in Python?</p></html>", "Correct", JOptionPane.YES_NO_OPTION);
+                    //JOptionPane.showMessageDialog(null, "Correct");
+                    
+                        if(result == 0){
+                            btnPythonActionPerformed(null);
+                        }
+                    }
+                    
+                    else {
+                        JOptionPane.showMessageDialog(null, "Correct!");
+                    }
+                    
                     removeComponents(panelCode);
                     removeComponents(panelKeyboard);
                     taskNum +=1;
+       
+                    
+                    if (taskNum == data.getTasksSize()){
+                        JOptionPane.showMessageDialog(null, "Difficulty Complete! \nTry a harder difficulty", "Complete", JOptionPane.INFORMATION_MESSAGE);
+                        close();
+                        OpeningScreen.main(null);
+                    }
+                    else {
                     newTask(taskNum, difficulty);     //goes to next task
+                    }
         }
         
         else {
-            System.out.println("NOT CORRECT");
             JOptionPane.showMessageDialog(null, "Incorrect");
+            switcher.addMoves(blanks); // this is used to to give the player amount needed to move every object. Needs to be changed!
             }
         
         try{
@@ -301,6 +413,7 @@ private static int rndKB;
                    w.getLabel().setIcon(null);
                    w.setIcon(false);
                    w.getLabel().revalidate();
+                   w.setDimension();
                 }
             }
             } catch (InterruptedException ex){
@@ -319,6 +432,19 @@ private static int rndKB;
         newTask(taskNum, difficulty);
     }//GEN-LAST:event_btnRemoveActionPerformed
 
+    private void btnPythonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPythonActionPerformed
+        String path;
+    try {
+        path = data.getFilesLocation(taskNum);
+        new TerminalFiles(path, windows, pyLocation);
+    } catch (IOException ex) {
+        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        JOptionPane.showMessageDialog(null, "Failed to get Python file location");
+        JOptionPane.showMessageDialog(null, "Python Failed to Run!");
+    }
+        
+    }//GEN-LAST:event_btnPythonActionPerformed
+
     private static void removeComponents(JPanel p){
         Component[] panel = p.getComponents();
         for(Component comp : panel){
@@ -331,7 +457,7 @@ private static int rndKB;
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String args[], int diff, boolean wnd, boolean pythree, String pyLoc) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -358,7 +484,7 @@ private static int rndKB;
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                Main dialog = new Main(new javax.swing.JFrame(), true, difficulty);
+                Main dialog = new Main(new javax.swing.JFrame(), true, diff, wnd, pythree, pyLoc);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -371,36 +497,45 @@ private static int rndKB;
     }
     
     private void newTask(int level, int diff) {
+        msgBoard.setText("");
         setLblNum(taskNum, taskSize);
         keyboard = data.getKeyboard(level); //shallow copy
         screenKB = new ArrayList<Word>(keyboard);
         switcher.setMaxMoves(diff , keyboard.size()); //this gets the blank
+        switcher.resetMoves();
         int n = rndKB - keyboard.size();
         screenKB.addAll(getRandomKeyboard(n));
         code = data.getCode(level);
         screenCode = new ArrayList<Word>(code); //contains the information that will change.
+        blanks = code.size();
+        setTask(data.getTask(level));
         
-        String task = data.getTask(level);
-        lblTask.setText("<html><p>"+task+"</p></html>");    //html used for automatic wrapping
         setup(screenCode, screenKB);
         
+    }
+    
+    private void setTask(String task){
+        lblTask.setText("<html><p>"+task+"</p></html>");    //html used for automatic wrapping
     }
     
     private static void setup(ArrayList<Word> c, ArrayList<Word> kb){
         newCode(c);
         newKeyboard(kb);  
+        
     }
     
     private static void lblFlash(ArrayList<Word> list){
         //makes a set of Jlabels flash to direct the player to where they should click.
         for(int i=0; i < 3; i++){
             for(Word w : list){
-                w.getLabel().setBackground(Color.yellow);
-                w.getLabel().setBorder(BorderFactory.createEtchedBorder(Color.lightGray, Color.yellow));
-                w.getLabel().setIcon(new javax.swing.ImageIcon(("/Images/tempFocus.png")));
-                //w.setDimension();
-                w.getLabel().repaint();
-                w.getLabel().revalidate();
+                if(!(w.getWord().equals("@tab@"))){
+                    w.getLabel().setBackground(Color.yellow);
+                    w.getLabel().setBorder(BorderFactory.createEtchedBorder(Color.lightGray, Color.yellow));
+                    w.getLabel().setIcon(new javax.swing.ImageIcon(("/Images/tempFocus.png")));
+                    //w.setDimension();
+                    w.getLabel().repaint();
+                    w.getLabel().revalidate();
+                }
             }
             try {
                 System.out.println("Flash");
@@ -428,8 +563,12 @@ private static int rndKB;
         Color colour = panel.getBackground();
         for(int i=0; i < 4; i++){
             panel.setBackground(Color.yellow);
+            panel.repaint();
+            panel.revalidate();
             TimeUnit.MILLISECONDS.sleep(400);
             panel.setBackground(colour);
+            panel.repaint();
+            panel.revalidate();
             TimeUnit.MILLISECONDS.sleep(400);
         }
     }
@@ -440,7 +579,7 @@ private static int rndKB;
         panelFlash(panelKeyboard);
     } catch (InterruptedException ex) {
         Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        
+        System.out.println("FLash crash");
     }
     }
     
@@ -450,34 +589,45 @@ private static int rndKB;
         panelFlash(panelCode);
     } catch (InterruptedException ex) {
         Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        System.out.println("FLash crash");
     }
     }
     
     
     public static void refresh(ArrayList<Word> c, ArrayList<Word> kb){
         //This take is used to be able to update the UI when switch has takn place.
+        msgChoose();
         screenKB = new ArrayList<>(switcher.getKeyboard());
         screenCode = new ArrayList<>(switcher.getCode());
         removeComponents(panelCode);
         removeComponents(panelKeyboard);
         setup(c, kb);
+        
+        
     }
     
     private static void newCode(ArrayList<Word> c){
         switcher.setCodeList(c);
+        //need to set universal background holder variable. Especially if KB and code are seperate colours vv
+        
         int xCoord = 20;
         int yCoord = 0;
         int num = 0;
+        int topX = 0; // stored for the dimension
         for(Word word : c) {
-            System.out.println(word.getWord());
+//            System.out.println(word.getWord());
             if (word.getWord().equals("@newline@")){
+                if(xCoord + 30 > topX){
+                    topX = xCoord + 30; //+30 is currently an arbitary number 
+                }
                 yCoord+=spaceY;
                 xCoord = 20;
                 word.newLabel(0, 0, null);            
                 word.getLabel().setVisible(false);
             }
+            
             else {
-                word.setList("code");
+                //word.setList("code");
                 String name = "code" + num;
                 num++;  
                 boolean kb = false;         //determines if keyboard to have those special options in the new label. Moved to constructor of word.
@@ -488,6 +638,16 @@ private static int rndKB;
                 xCoord += word.getLabel().getWidth() + spaceX; // this makes sure there is a space inbetween 
             }
         }
+        
+        //System.out.println("code:" + panelCode.getSize() + ",X:" + topX);
+        
+//        panelCode.setSize(topX, panelCode.getHeight());
+//        panelKeyboard.setSize(topX, panelKeyboard.getHeight());
+        //JDialog.WIDTH = panelCode.getWidth() + panelTask.getWidth();
+        
+        //Dimension d = panelCode.getPreferredSize();
+        //panelCode.setSize(d);
+        //panelKeyboard.setSize(d.width, panelKeyboard.getPreferredSize().height);
     }
     
 private static void newKeyboard(ArrayList<Word> k){
@@ -498,19 +658,25 @@ private static void newKeyboard(ArrayList<Word> k){
         int gapX = (panelKeyboard.getWidth() - 60) / 5;
         int gapY = panelKeyboard.getHeight() / 3;
         for (Word word : k){
-            word.setList("kb"); //this is telling that the word belongs to KB.
+            //word.setList("kb"); //this is telling that the word belongs to KB.
             String name = "key"+num;
             word.newLabel(xCoord, yCoord, name);
             word.setLabelName(name);
             panelKeyboard.add(word.getLabel());
             //System.out.println("KB;     " + word.getWord() + ";      " + word.getLabelName()+ ";      " + word.getLabel().getLocation()+ ";      " +word.getLabel().isVisible());
-            xCoord+=gapX; //equal width apart for number of objects but including random notatin 
+            
+            xCoord+=gapX + word.getLabel().getWidth(); //equal width apart for number of objects but including random notatin 
             num++;
-            if ((num % 5) == 0){
+            if(xCoord > panelKeyboard.getWidth()){
+            //if ((num % 5) == 0){
                 yCoord += gapY;
                 xCoord = 20;
             }
         }
+        
+        //System.out.println("KB:" + panelKeyboard.getSize() + ",Y:" + yCoord);
+        
+        //panelKeyboard.setSize(panelKeyboard.getWidth(), panelKeyboard.getPreferredSize().height);
         
     }
 
@@ -532,16 +698,31 @@ private static void newKeyboard(ArrayList<Word> k){
     }   
     
     public static void setMovesLeft (int moves){
-        lblMoves.setText("Switches:" + moves);
+        lblMoves.setText("Moves Left:" + moves);
+        lblMoves.setSize(lblMoves.getPreferredSize());
     }
-
+    
+    public static Color getCodeBackground(){
+        return panelCode.getBackground();
+    }
+    
+    /**
+     * A method for getting closing the Main form
+     */
+    public void close(){
+        dispose();
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCheck;
+    private javax.swing.JButton btnPython;
     private javax.swing.JButton btnRemove;
     private static javax.swing.JLabel lblMoves;
     private javax.swing.JLabel lblNum;
     private javax.swing.JLabel lblSpace;
     private javax.swing.JLabel lblTask;
+    private static javax.swing.JTextArea msgBoard;
+    private javax.swing.JScrollPane msgScroll;
     private static javax.swing.JPanel panelCode;
     private javax.swing.JPanel panelFunction;
     private static javax.swing.JPanel panelKeyboard;

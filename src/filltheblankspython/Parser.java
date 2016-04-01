@@ -12,10 +12,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 /**
- *
+ * The Parser class is used to the get the data for the task from the given text
+ * file. It sets out which words are going to be blanked out and adds the necessary
+ * tags used for formatting when creating the JLabels later on.
+ * 
+ * 
  * @author Joshua Mulcock
  */
 public class Parser {
+    
     private ArrayList<Word> keyboard;
     private ArrayList<Word> code;
     private String task;
@@ -23,6 +28,14 @@ public class Parser {
     private HashMap<String,String> dictionary;
     private int difficulty;
     
+    /**
+     * The constructor for Parser Class
+     * @param f     the file to get the data from
+     * @param ws    the WordSwitcher which switches the word. Needed to add to 
+     *              the created word.
+     * @param dic   the dictionary of functions
+     * @param diff  the difficulty of the round.
+     */
     public Parser(File f, WordSwitcher ws, HashMap<String, String> dic, int diff){
         File file = f;
         switcher = ws;
@@ -34,13 +47,25 @@ public class Parser {
         setKeyboard();
     }
     
-    
+    /**
+     * The method extrapolates the data from the text files. It words out which
+     * is the task rather than code adds the @newline@ placeholder at the end of
+     * each line.
+     * @param f     The file to be processed
+     */
     private void inputData(File f){
         try (BufferedReader br = Files.newBufferedReader(f.toPath())) {
             String s = null;
+            int cnt = 0;
+            ArrayList<String> bob = new ArrayList<>();
             while ((s = br.readLine()) != null){
+                bob.add(s);
+                cnt++;
                 if(s.contains("Task:")){
-                    task = s;
+                    task = s.replace("#Task", "Task");
+                }
+                else if(s.length()==0){
+                    System.out.println("EMPTY LINE");   //THis is catching and ignoring empty lines
                 }
                 else {
                     String[] words = StringChopper(s);
@@ -50,26 +75,32 @@ public class Parser {
                 }
                 
             }
+            
         } catch (IOException x){
             System.err.format("IOException: %s%n", x);
         }
        
     }
     
+    
+    /**
+     * The method splits a string of code into a string that contain each element 
+     * from the code.
+     * @param string    the line of code taken from the text file.
+     * @return          String array of each of the words from the line of code
+     */
     private String[] StringChopper(String string){
         //working
         String[] words = string.split("\\s");
         return words;
     }
     
-    /*
-    @param difficulty the difficulty represents how many keybparts need to be hidden
-    @int place is a holder for a random position
-    The setKeybaord class could be implemented to select random words to be used as the keyboard.
-    This removes the necessity of having to prechoose what words are implemented
-    and can lead to the same files to being used over and over again. Currently 
-    not implemented.
-    */
+    /**
+     * This method sets which words are going to blanked out. It then creates
+     * adds these words to the keyboard ArrayList. It uses the method getBlanks 
+     * to work out how many blanks are needed. It ignore any previously used words
+     * or the newline or tab holders.
+     */
     private void setKeyboard(){
         int place, blanks;      //blanks is number of blanks
         blanks = getBlanks(difficulty);
@@ -79,7 +110,7 @@ public class Parser {
             do {
                 place = rnd.nextInt(code.size());
                 w = code.get(place);
-            } while(w.getWord().equals("@newline@") || w.isBlank() == true || w.getWord().equals("\t")); //Pevents the newline being an option or one that has already being chosen
+            } while(w.getWord().equals("@newline@") || w.isBlank() == true || w.getWord().equals("@tab@")); //Pevents the newline being an option or one that has already being chosen
             Word kb =  w.clone();
             kb.setKeyboard(true);
             keyboard.add(kb);
@@ -87,34 +118,67 @@ public class Parser {
         }
     }
     
+    
+    /**
+     * This method works out how many blanks there should be in the code.
+     * @param diff  the difficulty chosen at the setup of the program
+     * @return      returns the how many blanks there should be in the code
+     */
     private int getBlanks(int diff){
         Random rnd = new Random();
-        int rand = rnd.nextInt(3) + 1;
         int missing;
+        int size = getActualCodeSize();
         if(diff == 0){
-            //missing = rnd.nextInt(3) + 3; //(max - min + 1) + min   3-5
-            missing = rand;
+            missing = rnd.nextInt(3) + 2;
         }
         else if(diff == 1){
-            missing = (code.size() / 2) - rand; 
-            
+            missing = (size / 3); 
         }
         else {
-            missing = (code.size() / 2) + rand;
+            missing = (size / 2);
         }
-        System.out.println("M:R:S;  "+missing + ":" + rand + ":"+code.size());
+        
         return missing;
     }
     
+    /**
+     * This method is used to go through the ArrayList code to take a count of 
+     * how many elements it contains that can be used for blanking out. It is used
+     * so that the amount of words missing is not excessive.
+     * @return how many Words actually contain code elements. 
+     */
+    private int getActualCodeSize(){
+        String s;
+        int size = 0;
+        for(Word w : code){
+            s = w.getWord();
+            if(s.equals("@tab@") || s.equals("@newline@")){
+                //does nothing
+            }
+            else {
+                size++;
+            }
+        }
+        return size;
+    }
+    
+    /**
+     * This method creates a new Word for each 'segment' of code. It then adds 
+     * the Word to code ArrayList. The method also recognises where a tabs to be 
+     * and sets a tag to be used later. The method also erases any '!' around 
+     * code segments, which is left over of some data files that were designed
+     * for the original method for choosing the blanks.
+     * @param words an array of each word from the line of code
+     */
     private void setWordList(String[] words){
         for(String word : words){
             Word w = new Word(word, false, switcher, false, dictionary);
             if(word.startsWith("!") && word.endsWith("!")){
-//                w.setBlank(true);
                 w.setWord(word.replaceAll("!", ""));
-//                
-//                Word kb = new Word(w.getWord(), false, switcher, true, dictionary);  //new instance of word
-//                keyboard.add(kb);
+            }
+            if(word.equals("    ")){
+                
+                w.setWord("@tab@");
             }
             code.add(w);
         }

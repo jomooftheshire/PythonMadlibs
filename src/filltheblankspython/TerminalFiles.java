@@ -19,15 +19,16 @@ import java.util.logging.Logger;
  */
 public class TerminalFiles {
     
-    public TerminalFiles(String file) throws UnsupportedEncodingException, IOException{
-        boolean unix = false; //method for finding what OS it is
-        if (unix){
-            //method for creating bash files and running it
+    public TerminalFiles(String file, boolean windows, String python) throws UnsupportedEncodingException, IOException{
+        
+        String dir = System.getProperty("user.dir");
+        if (windows){
+            createBAT(file, dir, python);
+            runBAT(dir);
+            deleteBAT();
         }
         else{
-            createBAT(file);
-            runBAT();
-            deleteBAT();
+            //method for creating bash files and running it
         }
     }
     
@@ -35,19 +36,21 @@ public class TerminalFiles {
      * This method creates the batch file that will be used to run the Python file
      * in the terminal. 
      * @param filePath the path to the python file
+     * @param dir the current working directory
+     * @param python the location of the python executable
      * @throws FileNotFoundException
      * @throws UnsupportedEncodingException 
      * @throws  IOException
      */
-    private void createBAT(String filePath) throws FileNotFoundException, UnsupportedEncodingException, IOException{
+    private void createBAT(String filePath, String dir, String python) throws FileNotFoundException, UnsupportedEncodingException, IOException{
         File folder = new File("./BAT");
         folder.mkdir();
-        
+        System.out.println(filePath);
         File file = new File("./BAT/pythonRunner.bat");
         file.createNewFile();
         PrintWriter writer = new PrintWriter(file, "UTF-8");
         //String python = pythonFinder(); //this will find the where the python is installed. Potentially should be done at the beginning of the program so it decides to show the button or not.
-        String python = "C:\\Python\\Python35-32\\python.exe"; //this is a place holder
+        //String python = "C:\\Python\\Python35-32\\python.exe"; //this is a place holder
         String execute = python + " " + filePath;
         writer.println(execute);
         writer.println("PAUSE");
@@ -58,11 +61,12 @@ public class TerminalFiles {
     /**
      * This method runs the batch file
      */
-    private void runBAT(){
+    private void runBAT(String dir){
         try {
-        Runtime.getRuntime().exec("cmd /c start ./BAT/pythonRunner.bat"); 
+        Runtime.getRuntime().exec("cmd /c start " + dir + "/BAT/pythonRunner.bat"); 
         } catch (IOException ex) {
             Logger.getLogger(TerminalFiles.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Runtime Failed");
         }
     }
     
@@ -71,7 +75,7 @@ public class TerminalFiles {
      * existing.
      */
     private void deleteBAT(){
-        File f = new File("./BAT");
+        File f = new File("/BAT");
         f.delete();
     }
     

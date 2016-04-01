@@ -15,6 +15,7 @@ import java.util.HashMap;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import java.awt.Cursor;
 
 /**
  *
@@ -29,40 +30,36 @@ public class Word {
     private final boolean empty;
     private boolean kb;
     private boolean icon;
-    private String list; //States what word the list belongs to (keyboard or code);
     private HashMap<String, String> dictionary;
     //Mouse adapter for deleting purposes. May not be necessary
     private MouseAdapter ml = new MouseAdapter() {    
                @Override
                public void mousePressed(MouseEvent e) {
+                        
                         label.setBorder(BorderFactory.createDashedBorder(Color.BLUE));
                         selected();
-                        //This will make it flash
-                        if(list.equals("kb")){
-                            Main.focusCode();
-                        }
-                        else if(list.equals("code")){
-                            Main.focusKB();
-                        }
-                        else{
-                            System.out.println("NO LIST!");
-                        }
                    }
+               
+                public void mouseEntered(MouseEvent e){
+                    label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+               }
                };
     
    
     public Word(String w, boolean b, WordSwitcher s, boolean keyboard, HashMap<String, String> dic){
-        word = w;
+        
+        if(w.equals("")){
+            word = "@tab@";
+        }
+        else{
+            word = w;
+        }
         blank = b;
         switcher = s;
         empty = false;
         kb = keyboard;
-        //dictionary.clone()
-        dictionary = dic; //.clone();
-        if(dictionary.isEmpty()){
-            System.out.println("Dictionary Null");
-        }
-            
+        dictionary = dic;
+        
     }
     
     public Word(WordSwitcher s){
@@ -89,27 +86,27 @@ public class Word {
     
      public void newLabel (int x, int y, String name){
         label = new JLabel();
+        label.setOpaque(true);
         label.setName(name);
         label.setLocation(x, y);
         label.setFocusable(true);
         //label.setSize(50, 30);
         label.setVisible(true);
         label.setText(getWord());
-        label.setFont(new Font("Monospace", Font.PLAIN, 30));
+        label.setFont(new Font("courier new", Font.PLAIN, 30));
+        label.setBackground(Main.getCodeBackground());
         if (isBlank()){
             label.setText("____");
         }
         
+        else if(getWord().equals("@tab@")){
+            label.setText("    ");
+        }
         else {
             if(dictionary.containsKey(getWord())){
                 label.setToolTipText(dictionary.get(getWord()));
             }
-            else {
-                label.setToolTipText("NOT FOUND");
-            }
         }
-        
-        setDimension();
         
         if (kb == false && isBlank() == false){
             label.setFocusable(false);
@@ -121,11 +118,13 @@ public class Word {
             
         if(label.isFocusable()){
                addMouse();
-            }
+        }
+        
+        setDimension();
      }
      
      public void setDimension(){
-         Dimension d = new Dimension(label.getPreferredSize().width + 5, label.getPreferredSize().height);       //+5 to solve the border issue
+         Dimension d = new Dimension(label.getPreferredSize().width, label.getPreferredSize().height);       //+5 to solve the border issue
             label.setMaximumSize(d);
             label.setMinimumSize(d);
             label.setSize(d);
@@ -140,7 +139,8 @@ public class Word {
      }
      
      public void selected(){
-         
+        Main.msgSelected();
+        Main.msgChoose();
          if (switcher.isWord2()){
              switcher.setWord2(this);
              switcher.needSwitch();
@@ -152,7 +152,12 @@ public class Word {
      }
      
      public void standardBorder(){
-         label.setBorder(BorderFactory.createEtchedBorder()); 
+         if(kb == true){
+            label.setBorder(BorderFactory.createRaisedSoftBevelBorder()); 
+         }
+         else {
+             label.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+         }
      }
      
       public void setLabelName(String name){
@@ -230,9 +235,6 @@ public class Word {
           return kb;
       }
       
-      public void setList(String l){
-          list = l;
-      }
       
       public void setKeyboard(boolean bool){
           kb = true;

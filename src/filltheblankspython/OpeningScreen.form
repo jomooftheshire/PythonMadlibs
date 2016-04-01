@@ -11,6 +11,7 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
+    <Property name="title" type="java.lang.String" value="FIll The Blanks ~ Python Edition"/>
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
       <Color blue="ff" green="cc" red="cc" type="rgb"/>
     </Property>
@@ -66,6 +67,7 @@
                                       <Component id="radMedium" min="-2" max="-2" attributes="0"/>
                                       <Component id="radEasy" min="-2" max="-2" attributes="0"/>
                                       <Component id="radHard" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="btnPython" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
@@ -102,6 +104,7 @@
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="btnHelp" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="btnStart" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnPython" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -114,14 +117,14 @@
         <Component class="javax.swing.JLabel" name="lblText">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Times New Roman" size="24" style="2"/>
+              <Font name="Tw Cen MT" size="24" style="2"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Fill The Blanks ~ Python Edition"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="btnStart">
           <Properties>
-            <Property name="text" type="java.lang.String" value="START!"/>
+            <Property name="text" type="java.lang.String" value="Start"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnStartActionPerformed"/>
@@ -135,7 +138,6 @@
         <Component class="javax.swing.JRadioButton" name="radMedium">
           <Properties>
             <Property name="text" type="java.lang.String" value="medium"/>
-            <Property name="actionCommand" type="java.lang.String" value="medium"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JRadioButton" name="radHard">
@@ -147,6 +149,17 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Help"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnHelpActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnPython">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Find Python 3"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPythonActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
