@@ -3,5 +3,11 @@ eval :: Used to change a value to numeric
 * :: Multiplication symbol
 / :: Division symbol
 import :: Used to access methods from other python modules to be used in the current module
-if :: A function used to decide if code associatied with it is run, depending if the
-else :: A function that holds code that will be run if the conditions for if or elif are not met. 
+if :: A function used to decide if the code associatied with it is run
+else :: A function that holds code that will be run if the conditions for if or elif are not met.
+elif :: A function that that holds another condition to decide if code will run when the "if" function is not met.
+** :: To the power of.
+range :: generates a list of numbers which are generally used to iterate over.
+for :: A loop function that runs a piece of code over and over again until a condition is met.
+while :: A loop function that runs a piece of code over and over again until the condition is no longer met.
+== :: A condition to see if one things equals another

@@ -15,7 +15,9 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
- *
+ * The Opening Screen is the form the user sees when first running the project JAR
+ * file. Its from here that the Python executable is found and the difficulty of
+ * program is also selected from here.
  * @author Joshua Mulcock
  */
 public class OpeningScreen extends javax.swing.JDialog {
@@ -82,8 +84,15 @@ public class OpeningScreen extends javax.swing.JDialog {
             FileNameExtensionFilter filter  = new FileNameExtensionFilter(".exe", "exe");
             fc.setFileFilter(filter);
             fc.showOpenDialog(null);
-            location = fc.getSelectedFile().getAbsolutePath();
-            isPythonThree(location, windows);
+            try {
+                location = fc.getSelectedFile().getAbsolutePath();
+                isPythonThree(location, windows);
+            } catch (NullPointerException ex){
+                JOptionPane.showMessageDialog(null, "Python not Found! \n \n Python Disabled!");
+                pythree = false;
+                location = null;
+            }
+            
         }
         else{
             pythree = false;
@@ -103,21 +112,21 @@ public class OpeningScreen extends javax.swing.JDialog {
      * @param windows whether the OS is windows or not
      */
     private void isPythonThree(String location, boolean windows){
+        System.out.println(location);
         if(windows){
             int version = 0;
             try {
-                Process p = Runtime.getRuntime().exec("cmd /C " + location + " -V");
+                Process p = Runtime.getRuntime().exec("cmd /C \"" + location + "\" -V");
                 BufferedReader in = new BufferedReader(
                                 new InputStreamReader(p.getInputStream()));
                 String line = in.readLine();
-                                
+                               
                 int i = 0;
                 boolean numFound = false;
                 char[] sepLine = line.toCharArray();
                 do {
                     if(Character.isDigit(sepLine[i])){
                         numFound = true;
-                        
                         version = sepLine[i];
                     }
                     else{
@@ -157,11 +166,12 @@ public class OpeningScreen extends javax.swing.JDialog {
         panelScreen = new javax.swing.JPanel();
         lblText = new javax.swing.JLabel();
         btnStart = new javax.swing.JButton();
-        radEasy = new javax.swing.JRadioButton();
-        radMedium = new javax.swing.JRadioButton();
-        radHard = new javax.swing.JRadioButton();
         btnHelp = new javax.swing.JButton();
         btnPython = new javax.swing.JButton();
+        jLayeredPane1 = new javax.swing.JLayeredPane();
+        radEasy = new javax.swing.JRadioButton();
+        radHard = new javax.swing.JRadioButton();
+        radMedium = new javax.swing.JRadioButton();
 
         Difficulty.add(radEasy);
         Difficulty.add(radMedium);
@@ -173,7 +183,7 @@ public class OpeningScreen extends javax.swing.JDialog {
 
         panelScreen.setBackground(new java.awt.Color(204, 204, 255));
 
-        lblText.setFont(new java.awt.Font("Tw Cen MT", 2, 24)); // NOI18N
+        lblText.setFont(new java.awt.Font("Tw Cen MT", 2, 36)); // NOI18N
         lblText.setText("Fill The Blanks ~ Python Edition");
 
         btnStart.setText("Start");
@@ -182,12 +192,6 @@ public class OpeningScreen extends javax.swing.JDialog {
                 btnStartActionPerformed(evt);
             }
         });
-
-        radEasy.setText("easy");
-
-        radMedium.setText("medium");
-
-        radHard.setText("hard");
 
         btnHelp.setText("Help");
         btnHelp.addActionListener(new java.awt.event.ActionListener() {
@@ -203,30 +207,73 @@ public class OpeningScreen extends javax.swing.JDialog {
             }
         });
 
+        jLayeredPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Difficulty"));
+
+        radEasy.setBackground(new java.awt.Color(204, 204, 255));
+        radEasy.setFont(new java.awt.Font("Tw Cen MT", 0, 24)); // NOI18N
+        radEasy.setText("easy");
+
+        radHard.setBackground(new java.awt.Color(204, 204, 255));
+        radHard.setFont(new java.awt.Font("Tw Cen MT", 0, 24)); // NOI18N
+        radHard.setText("hard");
+
+        radMedium.setBackground(new java.awt.Color(204, 204, 255));
+        radMedium.setFont(new java.awt.Font("Tw Cen MT", 0, 24)); // NOI18N
+        radMedium.setText("medium");
+        radMedium.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radMediumActionPerformed(evt);
+            }
+        });
+
+        jLayeredPane1.setLayer(radEasy, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(radHard, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(radMedium, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        javax.swing.GroupLayout jLayeredPane1Layout = new javax.swing.GroupLayout(jLayeredPane1);
+        jLayeredPane1.setLayout(jLayeredPane1Layout);
+        jLayeredPane1Layout.setHorizontalGroup(
+            jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jLayeredPane1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(radMedium)
+                    .addComponent(radEasy)
+                    .addComponent(radHard))
+                .addContainerGap())
+        );
+        jLayeredPane1Layout.setVerticalGroup(
+            jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jLayeredPane1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(radEasy)
+                .addGap(18, 18, 18)
+                .addComponent(radMedium)
+                .addGap(18, 18, 18)
+                .addComponent(radHard)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout panelScreenLayout = new javax.swing.GroupLayout(panelScreen);
         panelScreen.setLayout(panelScreenLayout);
         panelScreenLayout.setHorizontalGroup(
             panelScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelScreenLayout.createSequentialGroup()
-                .addGroup(panelScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelScreenLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(panelScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblText, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(panelScreenLayout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addGroup(panelScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(radMedium)
-                                    .addComponent(radEasy)
-                                    .addComponent(radHard)
-                                    .addComponent(btnPython))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 215, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelScreenLayout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnStart)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                .addGap(20, 20, 20)
+                .addComponent(btnPython)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnStart)
+                .addGap(18, 18, 18)
                 .addComponent(btnHelp)
                 .addContainerGap())
+            .addGroup(panelScreenLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelScreenLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblText, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelScreenLayout.setVerticalGroup(
             panelScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -234,20 +281,12 @@ public class OpeningScreen extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(lblText, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(radEasy)
-                .addGap(18, 18, 18)
-                .addComponent(radMedium)
-                .addGap(18, 18, 18)
-                .addGroup(panelScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelScreenLayout.createSequentialGroup()
-                        .addComponent(radHard)
-                        .addGap(0, 50, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelScreenLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(panelScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnHelp)
-                            .addComponent(btnStart)
-                            .addComponent(btnPython))))
+                .addComponent(jLayeredPane1)
+                .addGap(22, 22, 22)
+                .addGroup(panelScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnHelp)
+                    .addComponent(btnStart)
+                    .addComponent(btnPython))
                 .addContainerGap())
         );
 
@@ -259,7 +298,9 @@ public class OpeningScreen extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelScreen, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(panelScreen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -285,16 +326,20 @@ public class OpeningScreen extends javax.swing.JDialog {
                 + " at new users to the language</p> <p></p> <p>Developed by Joshua Mulcock</p></html>");
     }//GEN-LAST:event_btnHelpActionPerformed
 
+    
     private void btnPythonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPythonActionPerformed
         pyLocation = getPythonLocation();
     }//GEN-LAST:event_btnPythonActionPerformed
 
+    private void radMediumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radMediumActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_radMediumActionPerformed
+
     /**
-     * THsi method is run to make to load up Main
+     * This method is run to make to load up Main
      * @param gameDiff the difficulty selected 
      */
     public void start(int gameDiff){
-        //Main game = new Main(new javax.swing.JFrame(), true, gameDiff, windows, pythree, pyLocation);
             Main game = new Main();
             game.main(null, gameDiff, windows, pythree, pyLocation);
             dispose();
@@ -348,6 +393,7 @@ public class OpeningScreen extends javax.swing.JDialog {
     private javax.swing.JButton btnHelp;
     private javax.swing.JButton btnPython;
     private javax.swing.JButton btnStart;
+    private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JLabel lblText;
     private javax.swing.JPanel panelScreen;
     private javax.swing.JRadioButton radEasy;

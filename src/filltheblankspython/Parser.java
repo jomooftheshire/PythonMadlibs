@@ -183,6 +183,7 @@ public class Parser {
             code.add(w);
         }
     }
+ 
     
     public ArrayList<Word> getKeyboardList(){
         return keyboard;

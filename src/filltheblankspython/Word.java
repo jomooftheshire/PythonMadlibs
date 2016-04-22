@@ -5,6 +5,8 @@
  */
 package filltheblankspython;
 
+import static filltheblankspython.Main.helpBlock1;
+import static filltheblankspython.Main.helpBlock2;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -14,11 +16,11 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
-import javax.swing.SwingConstants;
 import java.awt.Cursor;
 
 /**
- *
+ * The Word class holds all of the information for each code segment that appears
+ * on the UI. It is from here that the JLabels are also made.
  * @author Joshua Mulcock
  */
 public class Word {
@@ -46,6 +48,15 @@ public class Word {
                };
     
    
+    /**
+     * This is the main constructor for Word.
+     * 
+     * @param w The code element in String format
+     * @param b If the Word is to blank
+     * @param s The WordSwitcher that is being used
+     * @param keyboard If the Word is in the Keyboard ArrayList
+     * @param dic The dictionary for describing what the words do.
+     */
     public Word(String w, boolean b, WordSwitcher s, boolean keyboard, HashMap<String, String> dic){
         
         if(w.equals("")){
@@ -62,6 +73,10 @@ public class Word {
         
     }
     
+    /**
+     * The constructor used for making empty Words, used for place holding 
+     * @param s The WordSwticher being used
+     */
     public Word(WordSwitcher s){
         switcher = s;
         empty = true;
@@ -80,10 +95,21 @@ public class Word {
         return blank;
     }
     
+    /**
+     * Sets if the Word is to be blank or not.
+     * @param bool 
+     */
     public void setBlank(boolean bool){
         blank = bool;
     }
     
+    /**
+     * The method creates the JLabel and give it particular properties, depending 
+     * on the Word properties which it is associated with.
+     * @param x X coordinate position of the JLabel
+     * @param y Y coordinate position of the JLabel
+     * @param name the name assigned to the JLabel 
+     */
      public void newLabel (int x, int y, String name){
         label = new JLabel();
         label.setOpaque(true);
@@ -120,37 +146,67 @@ public class Word {
                addMouse();
         }
         
-        setDimension();
+        setSize();
      }
      
-     public void setDimension(){
+     /**
+      * Used for setting the size for the JLabel. 
+      */
+     public void setSize(){
          Dimension d = new Dimension(label.getPreferredSize().width, label.getPreferredSize().height);       //+5 to solve the border issue
             label.setMaximumSize(d);
             label.setMinimumSize(d);
             label.setSize(d);
      }
      
+     /**
+      * Adds a MouseListerner to the JLabel
+      */
      public void addMouse(){
          label.addMouseListener(ml);
      }
      
+     /**
+      * Removes the MouseListener.
+      */
      public void removeMouse(){
          label.removeMouseListener(ml);
      }
      
+     /**
+      * This method is run when the JLabel is selected. It changes the help messages
+      * in the Main form depending on is the Word is a blank or not. It then runs
+      * a method in WordSwitcher to assign itself as one of the selected words and 
+      * then checks if the system needs to switch the Words.
+      * 
+      */
      public void selected(){
-        Main.msgSelected();
-        Main.msgChoose();
+            if(isBlank()){
+                  helpBlock2(4);
+            }
+            else{
+                if(Main.isGaps()){
+                  helpBlock1(2);
+                }
+                else {
+                    helpBlock2(2);
+                }
+            }  
+          
          if (switcher.isWord2()){
              switcher.setWord2(this);
              switcher.needSwitch();
          }
          else {
+                          
              switcher.setWord1(this);
              switcher.needSwitch();
          }
      }
      
+     /**
+      * Sets the Border around the JLabel.
+      */
      public void standardBorder(){
          if(kb == true){
             label.setBorder(BorderFactory.createRaisedSoftBevelBorder()); 
@@ -160,32 +216,23 @@ public class Word {
          }
      }
      
+     /**
+      * Sets the JLabel name
+      * @param name JLabel name
+      */
       public void setLabelName(String name){
             label.setName(name);
       }
       
       
-      public void setWord(String w){
-          word = w;
-      }
-      
       public JLabel getLabel(){
           return label;
       }
       
-      public void setCoords(int x, int y){
-          xCoord = x;
-          yCoord = y;
-      }
-      
-      public int getX(){
-          return xCoord;
-      }
-      
-      public int getY(){
-          return yCoord;
-      }
-      
+      /**
+       * Gets the name of the JLabel
+       * @return JLabel Name 
+       */
       public String getLabelName(){
           try {
             return label.getName();
@@ -194,10 +241,7 @@ public class Word {
               return null;
           }
       }
-      
-      public void printName(){
-          System.out.println(word);
-      }
+           
       
       public boolean isKeyboard(){
           return kb; 
@@ -212,6 +256,11 @@ public class Word {
           label = null;
       }
       
+      /**
+       * This method is used to clone the this Word. It creates a new Word object 
+       * using this Words properties.
+       * @return new Word object 
+       */
       public Word clone(){
           Word w = new Word(word, blank, switcher, kb, dictionary);
           w.setLabel(getLabel());
@@ -240,5 +289,8 @@ public class Word {
           kb = true;
       }
       
+      public void setWord(String w){
+          word = w;
+      }
       
 }

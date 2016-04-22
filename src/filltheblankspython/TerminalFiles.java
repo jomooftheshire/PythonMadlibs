@@ -14,10 +14,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * TerminalFiles deals with the running of the Python scripts in the Operating 
+ * Systems Command Line. Currently only works with Windows OS.
  * @author Joshua Mulcock
  */
 public class TerminalFiles {
+    
+    /**
+     * The constructor for terminal files. Decides whether the methods should be
+     * run or not
+     * @param file the location of the Python Files currently being used
+     * @param windows whether the OS is Windows or not
+     * @param python The location of the Python executable.
+     * @throws UnsupportedEncodingException
+     * @throws IOException 
+     */
     
     public TerminalFiles(String file, boolean windows, String python) throws UnsupportedEncodingException, IOException{
         
@@ -60,6 +71,7 @@ public class TerminalFiles {
     
     /**
      * This method runs the batch file
+     * @param dir The location of the current working directory.
      */
     private void runBAT(String dir){
         try {

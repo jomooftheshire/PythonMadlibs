@@ -9,11 +9,11 @@ import java.awt.Window;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 /**
- *
+ * The WordSwitcher class is used to do the switching of Words in the ArrayLists.
  * @author Joshua Mulcock
  */
 
-//neen to set 
+
 public class WordSwitcher {
     private Word word1, word2;
     private ArrayList<Word> kb, code;
@@ -138,21 +138,23 @@ public class WordSwitcher {
         int pos1,pos2;
         Word tempWord;
         boolean fIsKB, sIsKB;   //f = first, s = second
+        boolean legitMove = true;     //if the switch is an acutal move.  
         
-        if(word2.getWord().equals("@panelKeyboard@")){
+        if(word2.getWord().equals("@panelKeyboard@")){ //testing if the panel has been clicked
            if(word1.getLabelName().contains("code")){
                 pos1 = getPosition(word1, code);
                 fIsKB = false;
                kb.add(word1);
-               code.remove(word1); //lost a different word in the LIST!
+               code.remove(word1);
+           }
+           else {
+               legitMove = false;
            }
           
         }   
         else {
             if(word1.getLabelName().contains("key")){
-                
                 pos1 = getPosition(word1, kb);
-               
                 fIsKB = true;
             }
         
@@ -195,6 +197,7 @@ public class WordSwitcher {
             else if (fIsKB == true && sIsKB == true){
                 kb.set(pos1, word2);
                 kb.set(pos2, word1);
+                legitMove = false;
             }
             
             else {
@@ -202,9 +205,10 @@ public class WordSwitcher {
                 code.set(pos2, word1);
             }     
        
-        }    
-        increaseMoves();
-        Main.msgSwitch();
+        }
+        if (legitMove){
+            increaseMoves();
+        }
         Main.refresh(code, kb);
     
     }
@@ -257,11 +261,14 @@ public class WordSwitcher {
     /**
      * This method works out when a switch between or within ArrayLists need to be
      * done. If so it launches the method for changing the places and then resets
-     * the class back to defaults.
+     * the class back to defaults. The method also works out if the same word has
+     * been chosen twice.
      */
     public void needSwitch(){
         if (w1exists == true && w2exists == true){
-            oldChangePlaces();
+            if ((word1.equals(word2)) == false){
+                oldChangePlaces();
+            }
             word1.standardBorder();
             word2.standardBorder();
             word1 = new Word(this);  //empty word except switcher reference and boolean to say its empty
